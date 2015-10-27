@@ -1,6 +1,7 @@
 #!/bin/bash
 (
-###################################################################
+####################################################################
+#
 #   Open Repeater Project
 #
 #    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
@@ -21,7 +22,7 @@
 #    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
 #
 ###################################################################
-# Auto Install Configuration options 
+# Auto Install Configuration options
 # (set it, forget it, run it)
 ###################################################################
 
@@ -30,7 +31,7 @@
 # Repeater call sign
 # Please change this to match the repeater call sign
 ####################################################
-cs="Set-This"
+cs="Set_This"
 
 ###################################################
 # Put /var/log into a tmpfs to improve performance 
@@ -39,8 +40,32 @@ cs="Set-This"
 ###################################################
 put_logs_tmpfs="n"
 
-# ----- Stop Edit Here ------- #
+###################################################
+# Install openrepeater gui dev dir
+###################################################
+install_php_dev="y"
 
+# ----- Stop Edit Here ------- #
+########################################################
+# Set mp3/wav file upload/post size limit for php/nginx
+# ( Must Have the M on the end )
+########################################################
+upload_size="25M"
+
+#######################
+# Nginx default www dir
+#######################
+WWW_PATH="/var/www"
+
+#################################
+#set Web User Interface Dir Name
+#################################
+gui_name="openrepeater"
+
+#####################
+#Php ini config file
+#####################
+php_ini="/etc/php5/fpm/php.ini"
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
@@ -104,18 +129,17 @@ esac
 ########
 case $(uname -m) in armv[6-9]l)
 echo
-echo " ArmHF arm v7 v8 v9 boards supported "
+echo " ArmHF arm v6 v7 v8 v9 boards supported "
 echo
 esac
 
 #############
 # Intel/AMD
 #############
-case $(uname -m) in x86_64|i[4-6]86)
+case $(uname -m) in x86_64|i[3-6]86)
 echo
-echo " Intel / Amd boards currently Support is comming soon "
+echo " Intel / Amd boards currently Supported"
 echo
-exit
 esac
 
 ###################
@@ -138,12 +162,6 @@ cat << DELIM
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
    Please Include Any Screen Output You Can To Show Where It Fails
-   
-  Note:
-
-  Pre-Install Information:
-
-       This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -168,9 +186,6 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
-######################################
-# Reconfigure system for performance
-######################################
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -188,9 +203,8 @@ tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mod
 DELIM
 
 
-
 ######################
-# Enable the spi & i2c
+# Enable the spi/i2c
 ######################
 echo "spicc" >> /etc/modules
 echo "aml_i2c" >> /etc/modules
@@ -205,6 +219,7 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
 DELIM
+
 
 ########################
 # cnfigure tmpfs sizes
@@ -288,7 +303,7 @@ DELIM
 #Setup /etc/hosts
 #################
 cat > /etc/hosts << DELIM
-127.0.0.1       localhost
+127.0.0.1       localhost 
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
@@ -296,6 +311,7 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
 127.0.0.1       $cs-repeater
+
 DELIM
 
 #################################################################################################
@@ -307,37 +323,15 @@ DELIM
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free testing
+deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
-DELIM
-
-####################
-# Odroid c1 c1+ repo
-####################
-cat > /etc/apt/sources.list.d/odroid.list << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
-DELIM
-
-##########################
-# Adding OpenRepeater Repo
-##########################
-cat > "/etc/apt/sources.list.d/openrepeater.list" <<DELIM
-deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
-DELIM
-
-#########################
-# SVXLink Testing repo
-#########################
-cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink-dev/devel/debian/ jessie main
 DELIM
 
 ######################
@@ -345,32 +339,105 @@ DELIM
 ######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-######################
-#Install Dependancies
-#####################
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog logrotate cron \
-		gawk watchdog python3-serial
+########################
+# Install Build Depends
+########################
+apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
+	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
+	unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
+	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen time vim \
+	install-info whiptail dialog logrotate cron usbutils gawk watchdog python3-serial
+	
+##################################
+# Add User and include in groupds
+# Required for svxlink to install 
+# properly
+#################################
+# Sane defaults:
+[ -z "$SERVER_HOME" ] && SERVER_HOME=/usr/bin
+[ -z "$SERVER_USER" ] && SERVER_USER=svxlink
+[ -z "$SERVER_NAME" ] && SERVER_NAME="Svxlink-related Daemons"
+[ -z "$SERVER_GROUP" ] && SERVER_GROUP=daemon
+     
+# Groups that the user will be added to, if undefined, then none.
+ADDGROUP="audio dialout"
+     
+# create user to avoid running server as root
+# 1. create group if not existing
+if ! getent group | grep -q "^$SERVER_GROUP:" ; then
+   echo -n "Adding group $SERVER_GROUP.."
+   addgroup --quiet --system $SERVER_GROUP 2>/dev/null ||true
+   echo "..done"
+fi
+    
+# 2. create homedir if not existing
+test -d $SERVER_HOME || mkdir $SERVER_HOME
+    
+# 3. create user if not existing
+if ! getent passwd | grep -q "^$SERVER_USER:"; then
+   echo -n "Adding system user $SERVER_USER.."
+   adduser --quiet \
+           --system \
+           --ingroup $SERVER_GROUP \
+           --no-create-home \
+           --disabled-password \
+           $SERVER_USER 2>/dev/null || true
+   echo "..done"
+fi
+    
+# 4. adjust passwd entry
+usermod -c "$SERVER_NAME" \
+    -d $SERVER_HOME   \
+    -g $SERVER_GROUP  \
+    $SERVER_USER
+# 5. Add the user to the ADDGROUP group
 
-#####################
-# Install SvxLink
-#####################		
-apt-get install -y --force-yes svxlink-server remotetrx 
+for group in $ADDGROUP ; do
+if test -n "$group"
+then
+    if ! groups $SERVER_USER | cut -d: -f2 | grep -qw "$group"; then
+	adduser $SERVER_USER "$group"
+    fi
+fi
+done
 
-#############################################
-#making links to make svxlink work correctly
-#############################################
+#########################
+# get svxlink src
+#########################
+git clone git://github.com/rneese45/svxlink.git /usr/src/svxlink
+cd /usr/src/svxlink
+git pull git://github.com/rneese45/svxlink.git test-full-patches-deb-pkg
+
+#############################
+#Build & Install svxllink
+#############################
+cd /usr/src/svxlink/src
+mkdir build
+cd build
+time wc cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES ..
+time wc make -j5
+time wc make doc
+make install
+ldconfig
+
+#making links...
 ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
+systemctrl enable svxlink.serviceclear
+
+service svxlink start
+
+#######################################################
+#Install svxlink en_US sounds
 #Working on sounds pkgs for future release of svxlink
-cd /usr/share/svxlink/sounds
+########################################################
+cd /usr/src || exit
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+rm *.bz2
 mv en_US-heather* en_US
-rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-cd /root
-
+mv en_US /usr/share/svxlink/sounds
+cd  ~ || exit
 
 ##################################
 # Enable New shellmenu for logins
@@ -384,10 +451,11 @@ if [ -f /usr/bin/odroid-svxlink-conf ]; then
 fi
 
 DELIM
-
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
+echo " #                                                                                        # "
+echo " #                This is a build from dev source install with systemd                    # "
 echo " #                                                                                        # "
 echo " #                   To Start the service fo svxlink on the cmd line                      # "
 echo " #                        run cmd: systemctl enable svxlink.service                       # "

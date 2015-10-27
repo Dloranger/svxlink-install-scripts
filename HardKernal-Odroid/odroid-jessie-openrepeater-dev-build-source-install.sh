@@ -416,7 +416,7 @@ done
 #########################
 git clone git://github.com/rneese45/svxlink.git /usr/src/svxlink
 cd /usr/src/svxlink
-git pull git://github.com/rneese45/svxlink.git 
+git pull git://github.com/rneese45/svxlink.git test-full-patches-deb-pkg
 
 #############################
 #Build & Install svxllink

@@ -1,31 +1,5 @@
 #!/bin/bash
 (
-####################################################################
-#
-#   Open Repeater Project
-#
-#    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.
-#
-#    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
-#
-###################################################################
-# Auto Install Configuration options
-# (set it, forget it, run it)
-###################################################################
-
 # ----- Start Edit Here ----- #
 ####################################################
 # Repeater call sign
@@ -40,32 +14,7 @@ cs="Set_This"
 ###################################################
 put_logs_tmpfs="n"
 
-###################################################
-# Install openrepeater gui dev dir
-###################################################
-install_php_dev="y"
-
 # ----- Stop Edit Here ------- #
-########################################################
-# Set mp3/wav file upload/post size limit for php/nginx
-# ( Must Have the M on the end )
-########################################################
-upload_size="25M"
-
-#######################
-# Nginx default www dir
-#######################
-WWW_PATH="/var/www"
-
-#################################
-#set Web User Interface Dir Name
-#################################
-gui_name="openrepeater"
-
-#####################
-#Php ini config file
-#####################
-php_ini="/etc/php5/fpm/php.ini"
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
@@ -351,10 +300,9 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 ########################
 apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
 	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
-	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev \
-	librtlsdr-dev git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen \
-	time inetutils-syslogd vim install-info whiptail dialog logrotate cron usbutils gawk watchdog \
-	python3-serial
+	unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev librtlsdr-dev \
+	git-core uuid-dev qtbase5-dev qttools5-dev-tools qttools5-dev git-core flite screen time \
+	vim install-info whiptail dialog logrotate cron usbutils gawk watchdog python3-serial
 
 ##################################
 # Add User and include in groupds

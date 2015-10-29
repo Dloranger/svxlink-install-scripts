@@ -284,6 +284,9 @@ apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tool
 #####################
 apt-get install -y --force-yes svxlink-server remotetrx 
 
+
+ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+
 ###########
 # Clean Up
 ###########
@@ -296,9 +299,6 @@ tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 cd /root
-
-
-ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
 ##################################
 # Enable New shellmenu for logins

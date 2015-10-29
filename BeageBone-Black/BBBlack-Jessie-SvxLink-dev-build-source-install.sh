@@ -1,31 +1,5 @@
 #!/bin/bash
 (
-####################################################################
-#
-#   Open Repeater Project
-#
-#    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
-#
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This program is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
-#
-#    You should have received a copy of the GNU General Public License
-#    along with this program.
-#
-#    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
-#
-###################################################################
-# Auto Install Configuration options
-# (set it, forget it, run it)
-###################################################################
-
 # ----- Start Edit Here ----- #
 ####################################################
 # Repeater call sign
@@ -40,32 +14,7 @@ cs="Set_This"
 ###################################################
 put_logs_tmpfs="n"
 
-###################################################
-# Install openrepeater gui dev dir
-###################################################
-install_php_dev="y"
-
 # ----- Stop Edit Here ------- #
-########################################################
-# Set mp3/wav file upload/post size limit for php/nginx
-# ( Must Have the M on the end )
-########################################################
-upload_size="25M"
-
-#######################
-# Nginx default www dir
-#######################
-WWW_PATH="/var/www"
-
-#################################
-#set Web User Interface Dir Name
-#################################
-gui_name="openrepeater"
-
-#####################
-#Php ini config file
-#####################
-php_ini="/etc/php5/fpm/php.ini"
 ######################################################################
 # check to see that the configuration portion of the script was edited
 ######################################################################
@@ -235,13 +184,8 @@ cat >> /boot/uEnv.txt << DELIM
 optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 
+#Disable/Remove apache2
 apt-get -y autoremove apache2*
-
-
-######################
-# Enable the spi/i2c
-######################
-
 
 ##########################################
 # SETUP configuration for /tmpfs for logs
@@ -253,7 +197,6 @@ if [[ $put_logs_tmpfs == "y" ]]; then
 cat >>/etc/fstab << DELIM
 tmpfs   /var/log                tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
 DELIM
-
 
 ########################
 # cnfigure tmpfs sizes
@@ -463,6 +406,9 @@ make doc
 make install
 ldconfig
 
+#making links...
+ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+
 systemctrl enable svxlink.serviceclear
 
 service svxlink start
@@ -479,8 +425,16 @@ mv en_US-heather* en_US
 mv en_US /usr/share/svxlink/sounds
 cd  ~ || exit
 
-ln -s /etc/openrepeater/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+##################################
+# Enable New shellmenu for logins
+# on enabled for root and only if 
+# the file exist
+##################################
+cat >> /root/.profile << DELIM
 
+if [ -f /usr/bin/svxlink-conf ]; then
+        . /usr/bin/svxlink-conf
+fi
 
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "

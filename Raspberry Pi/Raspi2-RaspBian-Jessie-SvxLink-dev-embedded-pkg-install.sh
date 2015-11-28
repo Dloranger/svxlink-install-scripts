@@ -308,7 +308,7 @@ cd /root
 ######################
 #Install svxlink Menu
 #####################
-wget https://github.com/rneese45/svxlink-menu
+wget https://github.com/rneese45/svxlink_menu
 chmod +x svxlink_menu 
 mv svxlink_menu /usr/bin
 
@@ -318,8 +318,8 @@ mv svxlink_menu /usr/bin
 ##############################################
 cat >> /root/.profile << DELIM
 
-if [ -f /usr/bin/svxlink-conf ]; then
-        . /usr//bin/svxlink-conf
+if [ -f /usr/bin/svxlink_conf ]; then
+        . /usr//bin/svxlink_conf
 fi
 
 DELIM

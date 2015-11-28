@@ -1,5 +1,26 @@
 #!/bin/bash
 (
+####################################################################
+#
+#   Open Repeater Project
+#
+#    Copyright (C) <2015>  <Richard Neese> kb3vgw@gmail.com
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.
+#
+#    If not, see <http://www.gnu.org/licenses/gpl-3.0.en.html>
+#
 #######################################
 # Auto Install Configuration options
 # (set it, forget it, run it)
@@ -11,6 +32,13 @@
 # Please change this to match the repeater call sign
 ####################################################
 cs="Set-This"
+
+###################################################
+# Put /var/log into a tmpfs to improve performance 
+# Super user option dont try this if you must keep 
+# logs after every reboot
+###################################################
+put_logs_tmpfs="n"
 
 # ----- Stop Edit Here ------- #
 ######################################################################
@@ -155,6 +183,23 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+########################
+# cnfigure tmpfs sizes
+########################
+cp /etc/default/tmpfs /etc/default/tmpfs.orig
+cat > /etc/default/tmpfs << DELIM
+RAMLOCK=yes
+RAMSHM=yes
+RAMTMP=yes
+
+TMPFS_SIZE=10%VM
+RUN_SIZE=10M
+LOCK_SIZE=5M
+SHM_SIZE=10M
+TMP_SIZE=25M
+
+DELIM
+
 ############################
 # set usb power level
 ############################
@@ -173,14 +218,6 @@ cat >> /etc/modules << DELIM
 #snd-bcm2835
 DELIM
 
-###############################
-# Disable the dphys swap file
-# Extend life of sd card
-###############################
-swapoff --all
-apt-get -y remove dphys-swapfile
-rm -rf /var/swap
-
 ##########################################
 #addon extra scripts for cloning the drive
 ##########################################
@@ -198,6 +235,71 @@ iface lo inet loopback
 iface eth0 inet dhcp
 
 DELIM
+
+##########################################
+# SETUP configuration for /tmpfs for logs
+##########################################
+if [[ $put_logs_tmpfs == "y" ]]; then
+#################
+#configure fstab
+#################
+cat >>/etc/fstab << DELIM
+tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
+DELIM
+
+#######################################
+# Configure /var/log dir's on reboots
+#######################################
+cat > /etc/init.d/preplog-dirs << DELIM
+#!/bin/bash
+#
+### BEGIN INIT INFO
+# Provides:          prepare-dirs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Required-Start:
+# Required-Stop:
+# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
+# Description:       Create needed directories on /var/log/ for tmpfs at startup
+### END INIT INFO
+# needed Dirs
+DIR[0]=/var/log/nginx
+DIR[1]=/var/log/apt
+DIR[2]=/var/log/ConsoleKit
+DIR[3]=/var/log/fsck
+DIR[4]=/var/log/news
+DIR[5]=/var/log/ntpstats
+DIR[6]=/var/log/samba
+DIR[7]=/var/log/lastlog
+DIR[8]=/var/log/exim
+DIR[9]=/var/log/watchdog
+case "${1:-''}" in
+  start)
+        typeset -i i=0 max=${#DIR[*]}
+        while (( i < max ))
+        do
+                mkdir  ${DIR[$i]}
+                chmod 755 ${DIR[$i]}
+                i=i+1
+        done
+        # set rights
+        chown www-data.adm ${DIR[0]}
+        chown root.adm ${DIR[6]}
+    ;;
+  stop)
+    ;;
+  restart)
+   ;;
+  reload|force-reload)
+   ;;
+  status)
+   ;;
+  *)
+DELIM
+
+chmod 755 /etc/init.d/preplog-dirs
+
+fi
 
 #############################
 #Setting Host/Domain name
@@ -220,27 +322,6 @@ ff02::2         ip6-allrouters
 127.0.0.1       $cs-repeater
 
 DELIM
-
-#####################################
-#Update base os with new repo in list
-#####################################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
-echo "--------------------------------------------------------------"
-echo ""
-gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
-gpg --export --armor 8B48AD6246925553 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
-gpg --export --armor  7638D0442B90D010 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
-gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
-wget https://www.raspberrypi.org/raspberrypi.gpg.key
-gpg --import raspberrypi.gpg.key | apt-key add -
-wget https://archive.raspbian.org/raspbian.public.key
-gpg --import raspbian.public.key | apt-key add -
-for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
-
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -251,18 +332,21 @@ for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
+#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-############
-# Raspi Repo
-###########################################################################
-# Put in Proper Location. All addon repos should be source.list.d sub dir
-###########################################################################
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+##########################
+# Adding bbblack Repo
+##########################
+cat >> "/etc/apt/sources.list.d/beaglebone.list" << DELIM
+deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
 DELIM
 
 #########################
@@ -277,26 +361,55 @@ DELIM
 ######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
+# ####################################
+# DISABLE BEAGLEBONE 101 WEB SERVICES
+# ####################################
+echo " Disabling The Beaglebone 101 web services "
+systemctl disable cloud9.service
+systemctl disable gateone.service
+systemctl disable bonescript.service
+systemctl disable bonescript.socket
+systemctl disable bonescript-autorun.service
+systemctl disable avahi-daemon.service
+systemctl disable gdm.service
+systemctl disable mpd.service
+
+echo " Stoping The Beaglebone 101 web services "
+systemctl stop cloud9.service
+systemctl stop gateone.service
+systemctl stop bonescript.service
+systemctl stop bonescript.socket
+systemctl stop bonescript-autorun.service
+systemctl stop avahi-daemon.service
+systemctl stop gdm.service
+systemctl stop mpd.service
+
+cat >> /boot/uEnv.txt << DELIM
+
+#####################
+#Disable HDMI sound
+#####################
+optargs=capemgr.disable_partno=BB-BONELT-HDMI
+DELIM
+
 ##########################
 #Installing Deps
 ##########################
-apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
-		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog logrotate cron \
-		gawk watchdog python3-serial
+apt-get install -y --force-yes libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd \
+		gpsd-clients flite wvdial screen time uuid vim install-info usbutils whiptail dialog \
+		logrotate cron gawk watchdog python3-serial
 
 ######################
 #Install svxlink
 #####################
 echo " Installing install deps and svxlink + remotetrx"
 apt-get -y --force-yes install svxlink-server remotetrx
-
 apt-get clean
 
 #making links...
+mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
-
-usermod -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
@@ -304,13 +417,6 @@ wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 cd /root
-
-######################
-#Install svxlink Menu
-#####################
-wget https://github.com/rneese45/svxlink-menu
-chmod +x svxlink_menu 
-mv svxlink_menu /usr/bin
 
 ##############################################
 # Enable New shellmenu for logins  on enabled 

@@ -1,9 +1,9 @@
 #!/bin/bash
 (
-###################################################################
-# Auto Install Configuration options 
+#######################################
+# Auto Install Configuration options
 # (set it, forget it, run it)
-###################################################################
+#######################################
 
 # ----- Start Edit Here ----- #
 ####################################################
@@ -85,10 +85,15 @@ esac
 #############
 case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently Support is comming soon "
+echo " Intel / Amd boards currently UnSupported"
 echo
 exit
 esac
+
+#####################################
+#Update base os with new repo in list
+#####################################
+apt-get update
 
 ###################
 # Notes / Warnings
@@ -110,12 +115,6 @@ cat << DELIM
      If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
    Please Include Any Screen Output You Can To Show Where It Fails
-   
-  Note:
-
-  Pre-Install Information:
-
-       This script uses Sqlite by default. No plans to use Other DB. 
 
 DELIM
 
@@ -140,9 +139,6 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
-######################################
-# Reconfigure system for performance
-######################################
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
@@ -159,12 +155,49 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-######################
-# Enable the spi & i2c
-######################
-echo "spicc" >> /etc/modules
-echo "aml_i2c" >> /etc/modules
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
 
+#usb max current
+usb_max_current=1
+DELIM
+
+#####################################
+# Disable Kernel Modules for onboard 
+# sound interface card
+####################################
+cat >> /etc/modules << DELIM
+#disable onboard sound
+#snd-bcm2835
+DELIM
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cd /root 
+
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
+
+DELIM
 
 #############################
 #Setting Host/Domain name
@@ -177,7 +210,7 @@ DELIM
 #Setup /etc/hosts
 #################
 cat > /etc/hosts << DELIM
-127.0.0.1       localhost
+127.0.0.1       localhost 
 ::1             localhost ip6-localhost ip6-loopback
 fe00::0         ip6-localnet
 ff00::0         ip6-mcastprefix
@@ -185,7 +218,28 @@ ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
 127.0.0.1       $cs-repeater
+
 DELIM
+
+#####################################
+#Update base os with new repo in list
+#####################################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
@@ -202,47 +256,54 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
-# HardKernel-Odroid repo
-cat > /etc/apt/sources.list.d/odroid.list << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
+############
+# Raspi Repo
+###########################################################################
+# Put in Proper Location. All addon repos should be source.list.d sub dir
+###########################################################################
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
+#########################
 # SVXLink Testing repo
+#########################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink-dev/devel/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
+######################
 #Update base os
+######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
+##########################
+#Installing Deps
+##########################
+apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+		flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils whiptail dialog logrotate cron \
+		gawk watchdog python3-serial
 
-#Install Dependancies
-apt-get install -y --force-yes libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd \
-		gpsd-clients flite wvdial screen time uuid vim install-info usbutils whiptail dialog \
-		logrotate cron gawk watchdog python3-serial
+######################
+#Install svxlink
+#####################
+echo " Installing install deps and svxlink + remotetrx"
+apt-get -y --force-yes install svxlink-server remotetrx
 
-# Install SvxLink
-		
-apt-get install -y --force-yes svxlink-server remotetrx 
+apt-get clean
 
-#Adding a link for customlogic and override tcl files for local events
-
+#making links...
 ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
-###########
-# Clean Up
-###########
-apt-get clean
+usermod -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
-rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-cd ~
+cd /root
 
 ######################
 #Install svxlink Menu

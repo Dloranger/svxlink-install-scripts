@@ -93,6 +93,26 @@ esac
 #####################################
 #Update base os with new repo in list
 #####################################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+
+#####################################
+#Update base os with new repo in list
+#####################################
 apt-get update
 
 ###################
@@ -164,15 +184,6 @@ cat >> /boot/config.txt << DELIM
 usb_max_current=1
 DELIM
 
-#####################################
-# Disable Kernel Modules for onboard 
-# sound interface card
-####################################
-cat >> /etc/modules << DELIM
-#disable onboard sound
-#snd-bcm2835
-DELIM
-
 ###############################
 # Disable the dphys swap file
 # Extend life of sd card
@@ -240,6 +251,18 @@ gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+
+
+###########################################################
+#Disable onboard hdmi soundcard not used in openrepeater
+###########################################################
+#/boot/config.txt
+sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+
+# Enable audio (loads snd_bcm2835)
+# dtparam=audio=on
+#/etc/modules
+sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get

@@ -192,14 +192,6 @@ swapoff --all
 apt-get -y remove dphys-swapfile
 rm -rf /var/swap
 
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-cd /usr/local/bin
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cd /root 
-
 #####################################################
 #fix usb sound/nic issue so network interface gets IP
 #####################################################
@@ -252,19 +244,7 @@ wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
-
-###########################################################
-#Disable onboard hdmi soundcard not used in openrepeater
-###########################################################
-#/boot/config.txt
-sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-# Enable audio (loads snd_bcm2835)
-# dtparam=audio=on
-#/etc/modules
-sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-
-#################################################################################################
+################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
 # sources.list "deb http://httpredir.debian.org/debian/ jessie main".
@@ -288,9 +268,9 @@ cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
-#########################
-# SVXLink Testing repo
-#########################
+#############################
+# SvxLink Release Repo ArmHF
+#############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -301,7 +281,7 @@ DELIM
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 ##########################
-#Installing Deps
+#Installing svxlink Deps
 ##########################
 apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
@@ -314,12 +294,14 @@ apt-get install -y --force-yes memcached sqlite3 libopus0 alsa-utils vorbis-tool
 echo " Installing install deps and svxlink + remotetrx"
 apt-get -y --force-yes install svxlink-server remotetrx
 
+#cleanup
 apt-get clean
 
 #making links...
 ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
-usermod -G gpio svxlink
+#adding user svxlink to gpio user group
+usermod -a -G gpio svxlink
 
 #Working on sounds pkgs for future release of svxlink
 cd /usr/share/svxlink/sounds
@@ -327,6 +309,46 @@ wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 cd /root
+
+##########################
+#Install Extra Sound Files
+##########################
+
+
+###########################
+#Install Custom Logic Files
+###########################
+
+
+###########################################################
+#Disable onboard hdmi soundcard not used in openrepeater
+###########################################################
+#/boot/config.txt
+sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+
+#/etc/modules
+sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+
+################################
+#Set up usb sound for alsa mixer
+################################
+if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+   echo "snd-usb-audio" >> /etc/modules
+fi
+FILE=/etc/modprobe.d/alsa-base.conf
+sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+fi
+
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+cd /usr/local/bin
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cd /root 
 
 ######################
 #Install svxlink Menu

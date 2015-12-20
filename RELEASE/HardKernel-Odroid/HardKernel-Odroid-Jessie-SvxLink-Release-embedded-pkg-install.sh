@@ -218,10 +218,11 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 
 #Install Dependancies
-apt-get install -y --force-yes libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd \
-		gpsd-clients flite wvdial screen time uuid vim install-info usbutils whiptail dialog \
-		logrotate cron gawk watchdog python3-serial
+apt-get install -y libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
+		sudo gpsd gpsd-clients flite wvdial screen time uuid vim install-info usbutils \
+		whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
+		git-core wiringpi
 
 # Install SvxLink
 		
@@ -236,7 +237,9 @@ ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 ###########
 apt-get clean
 
+#####################################################
 #Working on sounds pkgs for future release of svxlink
+#####################################################
 cd /usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
@@ -244,12 +247,42 @@ mv en_US-heather* en_US
 rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 cd ~
 
+##############################
+#Install Courtesy Sound Files
+##############################
+git clone https://github.com/rneese45/Svxlink-Custom-Sounds.git
+
+cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
+
+################################
+#Make and Link Custome Sound Dir
+################################
+mkdir -p /usr/share/svxlink/sounds/en_US/Courtesy_Tones
+mkdir -p /root/sounds/Custom_Courtesy_Tones
+ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/en_US/Custom_Courtesy_Tones
+mkdir -p /root/sounds/Custom_Identification
+ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/en_US/Custom_Identification
+
+#################################
+# Make and link Local event.d dir
+#################################
+mkdir /etc/svxlink/local-events.d
+ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
+
+###########################
+#Install Custom Logic Files
+###########################
+git clone https://github.com/rneese45/Svxlink-Custom-Logic.git
+cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
+rm -rf Svxlink-Custom-Logic
+
 ######################
 #Install svxlink Menu
 #####################
-wget https://github.com/rneese45/svxlink_menu
-chmod +x svxlink_menu 
-mv svxlink_menu /usr/bin
+git clone https://github.com/rneese45/svxlink-menu.git
+chmod +x svxlink-menu/svxlink_config
+cp -r svxlink-menu/svxlink_config /usr/bin
+rm -rf svxlink-menu
 
 ##############################################
 # Enable New shellmenu for logins  on enabled 
@@ -257,21 +290,27 @@ mv svxlink_menu /usr/bin
 ##############################################
 cat >> /root/.profile << DELIM
 
-if [ -f /usr/bin/svxlink_conf ]; then
-        . /usr//bin/svxlink_conf
+if [ -f /usr/bin/svxlink_config ]; then
+        . /usr//bin/svxlink_config
 fi
 
 DELIM
 
-echo " ########################################################################################## "
-echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
-echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo svxlink on the cmd line                      # "
-echo " #                        run cmd: systemctl enable svxlink.service                       # "
-echo " #                                                                                        # "
-echo " #                   To Start the service fo remotetrx on the cmd line                    # "
-echo " #                        run cmd: systemctl enable remotetrx.service                     # "
-echo " #                                                                                        # "
-echo " ########################################################################################## "
+##################################
+#Backup Basic svxlink config files
+##################################
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
+
+#######################
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink systemd Service Daemon "
+systemctl enable svxlink.service
+
+
+#reboot sysem for all changes to take effecy
+echo " rebooting system "
+reboot
+
 ) | tee /root/install.log

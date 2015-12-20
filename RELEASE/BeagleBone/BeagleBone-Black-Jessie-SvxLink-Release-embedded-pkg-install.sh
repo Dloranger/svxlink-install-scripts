@@ -200,32 +200,6 @@ TMP_SIZE=25M
 
 DELIM
 
-############################
-# set usb power level
-############################
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-DELIM
-
-#####################################
-# Disable Kernel Modules for onboard 
-# sound interface card
-####################################
-cat >> /etc/modules << DELIM
-#disable onboard sound
-#snd-bcm2835
-DELIM
-
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-cd /usr/local/bin
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cd /root 
-
 #####################################################
 #fix usb sound/nic issue so network interface gets IP
 #####################################################
@@ -235,71 +209,6 @@ iface lo inet loopback
 iface eth0 inet dhcp
 
 DELIM
-
-##########################################
-# SETUP configuration for /tmpfs for logs
-##########################################
-if [[ $put_logs_tmpfs == "y" ]]; then
-#################
-#configure fstab
-#################
-cat >>/etc/fstab << DELIM
-tmpfs   /var/log  tmpfs   size=20M,defaults,noatime,mode=0755 0 0 
-DELIM
-
-#######################################
-# Configure /var/log dir's on reboots
-#######################################
-cat > /etc/init.d/preplog-dirs << DELIM
-#!/bin/bash
-#
-### BEGIN INIT INFO
-# Provides:          prepare-dirs
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Required-Start:
-# Required-Stop:
-# Short-Description: Create needed directories on /var/log/ for tmpfs at startup
-# Description:       Create needed directories on /var/log/ for tmpfs at startup
-### END INIT INFO
-# needed Dirs
-DIR[0]=/var/log/nginx
-DIR[1]=/var/log/apt
-DIR[2]=/var/log/ConsoleKit
-DIR[3]=/var/log/fsck
-DIR[4]=/var/log/news
-DIR[5]=/var/log/ntpstats
-DIR[6]=/var/log/samba
-DIR[7]=/var/log/lastlog
-DIR[8]=/var/log/exim
-DIR[9]=/var/log/watchdog
-case "${1:-''}" in
-  start)
-        typeset -i i=0 max=${#DIR[*]}
-        while (( i < max ))
-        do
-                mkdir  ${DIR[$i]}
-                chmod 755 ${DIR[$i]}
-                i=i+1
-        done
-        # set rights
-        chown www-data.adm ${DIR[0]}
-        chown root.adm ${DIR[6]}
-    ;;
-  stop)
-    ;;
-  restart)
-   ;;
-  reload|force-reload)
-   ;;
-  status)
-   ;;
-  *)
-DELIM
-
-chmod 755 /etc/init.d/preplog-dirs
-
-fi
 
 #############################
 #Setting Host/Domain name
@@ -353,7 +262,7 @@ DELIM
 # SVXLink Testing repo
 #########################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 
 ######################
@@ -392,13 +301,32 @@ cat >> /boot/uEnv.txt << DELIM
 optargs=capemgr.disable_partno=BB-BONELT-HDMI
 DELIM
 
+################################
+#Set up usb sound for alsa mixer
+################################
+if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+   echo "snd-usb-audio" >> /etc/modules
+fi
+FILE=/etc/modprobe.d/alsa-base.conf
+sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+fi
+
+##########################################
+#update the kernal on the beaglebone black
+##########################################
+apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
+
 ##########################
 #Installing Deps
 ##########################
-apt-get install -y --force-yes libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 sudo gpsd \
-		gpsd-clients flite wvdial screen time uuid vim install-info usbutils whiptail dialog \
-		logrotate cron gawk watchdog python3-serial
+apt-get install -y libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
+		sudo gpsd gpsd-clients flite wvdial screen time uuid vim install-info usbutils \
+		whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
+		git-core
 
 ######################
 #Install svxlink
@@ -417,6 +345,31 @@ wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
 cd /root
+
+##############################
+#Install Courtesy Sound Files
+##############################
+
+
+################################
+#Make and Link Custome Sound Dir
+################################
+mkdir -p /usr/share/svxlink/sounds/Courtesy_Tones
+mkdir -p /root/sounds/Custom_Courtesy_Tones
+ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
+mkdir -p /root/sounds/Custom_Identify
+ln -s /root/sounds/Custom_Identify /usr/share/svxlink/sounds/Custom_Identify
+
+#################################
+# Make and link Local event.d dir
+#################################
+mkdir /etc/svxlink/local-events.d
+ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
+
+###########################
+#Install Custom Logic Files
+###########################
+/etc/svxlink/local-events.d
 
 ##############################################
 # Enable New shellmenu for logins  on enabled 

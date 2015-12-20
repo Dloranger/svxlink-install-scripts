@@ -307,11 +307,12 @@ usermod -a -G gpio svxlink
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-cd /usr/share/svxlink/sounds
+/usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
-cd /root
+mv en_US /usr/share/svxlink/sounds
+rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 
 ##############################
 #Install Courtesy Sound Files

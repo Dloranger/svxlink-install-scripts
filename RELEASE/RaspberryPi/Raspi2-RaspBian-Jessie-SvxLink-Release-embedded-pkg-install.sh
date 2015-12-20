@@ -272,7 +272,7 @@ DELIM
 # SvxLink Release Repo ArmHF
 #############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
+deb http://104.236.193.157/svxlink/release/debian/ jessie main
 DELIM
 
 ######################
@@ -307,7 +307,6 @@ usermod -a -G gpio svxlink
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-/usr/share/svxlink/sounds
 wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 mv en_US-heather* en_US
@@ -405,8 +404,10 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
 
-
-#reboot sysem for all changes to take effecy
-echo " rebooting system "
+############################################
+#reboot sysem for all changes to take effect
+############################################
+echo " rebooting system forfull changes to take effect "
 reboot
+
 ) | tee /root/install.log

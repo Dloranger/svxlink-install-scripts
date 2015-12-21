@@ -404,6 +404,12 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
 
+#######################
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
+systemctl enable remotetrx.service
+
 ############################################
 #reboot sysem for all changes to take effect
 ############################################

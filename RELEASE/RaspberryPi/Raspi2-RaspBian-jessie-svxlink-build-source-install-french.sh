@@ -250,7 +250,7 @@ done
 #########################
 # get svxlink src
 #########################
-wget https://github.com/rneese45/svxlink/archive/15.11.1.tar.gz
+wget https://github.com/kb3vgw/svxlink/archive/15.11.1.tar.gz
 tar xzvf 15.11.1.tar.gz -C /usr/src
 rm 15.11.1.tar.gz
 
@@ -272,7 +272,7 @@ ldconfig
 wget https://raw.githubusercontent.com/sm0svx/svxlink/master/src/svxlink/scripts/play_sound.sh
 wget https://raw.githubusercontent.com/sm0svx/svxlink/master/src/svxlink/scripts/filter_sounds.sh
 chmod +x play_sound.sh filter_sounds.sh
-git clone https://github.com/rneese45/svxlink-sounds-fr_FR-heather.git orig-fr-FR-heather
+git clone https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather.git orig-fr-FR-heather
 ./filter_sounds.sh orig-fr-FR-heather fr-FR-heather-16k
 mv fr-FR-heather-16k /usr/share/svxlink/sounds/fr-FR
 rm -rf orig-fr-FR-heather *.bz2 play_sound.sh filter_sounds.sh
@@ -280,7 +280,7 @@ rm -rf orig-fr-FR-heather *.bz2 play_sound.sh filter_sounds.sh
 ##############################
 #Install Courtesy Sound Files
 ##############################
-git clone https://github.com/rneese45/Svxlink-Custom-Sounds.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
 cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
 rm -rf Svxlink-Custom-Sounds
 
@@ -301,14 +301,14 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ###########################
 #Install Custom Logic Files
 ###########################
-git clone https://github.com/rneese45/Svxlink-Custom-Logic.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
 ######################
 #Install svxlink Menu
 #####################
-git clone https://github.com/rneese45/svxlink-menu.git
+git clone https://github.com/kb3vgw/svxlink-menu.git
 chmod +x svxlink-menu/svxlink_config
 cp -r svxlink-menu/svxlink_config /usr/bin
 rm -rf svxlink-menu

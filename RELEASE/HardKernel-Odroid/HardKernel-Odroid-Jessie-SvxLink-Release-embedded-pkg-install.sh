@@ -249,7 +249,7 @@ rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
 ##############################
 #Install Courtesy Sound Files
 ##############################
-git clone https://github.com/rneese45/Svxlink-Custom-Sounds.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
 
 cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
 
@@ -271,14 +271,14 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ###########################
 #Install Custom Logic Files
 ###########################
-git clone https://github.com/rneese45/Svxlink-Custom-Logic.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
 ######################
 #Install svxlink Menu
 #####################
-git clone https://github.com/rneese45/svxlink-menu.git
+git clone https://github.com/kb3vgw/svxlink-menu.git
 chmod +x svxlink-menu/svxlink_config
 cp -r svxlink-menu/svxlink_config /usr/bin
 rm -rf svxlink-menu

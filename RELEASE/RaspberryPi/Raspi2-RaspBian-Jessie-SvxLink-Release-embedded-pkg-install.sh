@@ -307,16 +307,16 @@ usermod -a -G gpio svxlink
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/sm0svx/svxlink-sounds-en_US-heather/releases/download/14.08/svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
-mv en_US-heather* en_US
+wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
+mv en_US-heather-16k en_US
 mv en_US /usr/share/svxlink/sounds
-rm svxlink-sounds-en_US-heather-16k-13.12.tar.bz2
+rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 
 ##############################
 #Install Courtesy Sound Files
 ##############################
-git clone https://github.com/rneese45/Svxlink-Custom-Sounds.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
 cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
 
 ################################
@@ -337,7 +337,7 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 ###########################
 #Install Custom Logic Files
 ###########################
-git clone https://github.com/rneese45/Svxlink-Custom-Logic.git
+git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
@@ -375,7 +375,7 @@ rm rpi-clone
 ######################
 #Install svxlink Menu
 #####################
-git clone https://github.com/rneese45/svxlink-menu.git
+git clone https://github.com/kb3vgw/svxlink-menu.git
 chmod +x svxlink-menu/svxlink_config
 cp -r svxlink-menu/svxlink_config /usr/bin
 rm -rf svxlink-menu

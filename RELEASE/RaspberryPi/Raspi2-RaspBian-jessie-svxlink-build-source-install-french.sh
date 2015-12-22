@@ -5,6 +5,24 @@
 # (set it, forget it, run it)
 ###################################################################
 
+# ----- Start Edit Here ----- #
+####################################################
+# Repeater call sign
+# Please change this to match the repeater call sign
+####################################################
+cs="Set-This"
+
+# ----- Stop Edit Here ------- #
+######################################################################
+# check to see that the configuration portion of the script was edited
+######################################################################
+if [[ $cs == "Set-This" ]]; then
+  echo
+  echo "Looks like you need to configure the scirpt before running"
+  echo "Please configure the script and try again"
+  exit 0
+fi
+
 ##################################################################
 # check to confirm running as root. # First, we need to be root...
 ##################################################################
@@ -151,6 +169,54 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
+
+#usb max current
+usb_max_current=1
+DELIM
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
+
+DELIM
+
+#############################
+#Setting Host/Domain name
+#############################
+cat > /etc/hostname << DELIM
+$cs-repeater
+DELIM
+
+#################
+#Setup /etc/hosts
+#################
+cat > /etc/hosts << DELIM
+127.0.0.1       localhost 
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+127.0.0.1       $cs-repeater
+
+DELIM
 
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get

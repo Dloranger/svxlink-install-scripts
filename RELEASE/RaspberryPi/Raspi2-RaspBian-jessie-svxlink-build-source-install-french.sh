@@ -69,7 +69,6 @@ case $(uname -m) in x86_64|i[4-6]86)
 echo
 echo " Intel / Amd boards currently UnSupported"
 echo
-exit
 esac
 
 #####################################
@@ -163,21 +162,17 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
 DELIM
 
 ############
-#Raspi Repo
-############
-cat > /etc/apt/sources.list.d/raspbian.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
+# Raspi Repo
+###########################################################################
+# Put in Proper Location. All addon repos should be source.list.d sub dir
+###########################################################################
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
 ######################

@@ -250,14 +250,14 @@ done
 #########################
 # get svxlink src
 #########################
-wget https://github.com/kb3vgw/svxlink/archive/15.11.1.tar.gz
-tar xzvf 15.11.1.tar.gz -C /usr/src
-rm 15.11.1.tar.gz
+wget https://github.com/kb3vgw/svxlink/archive/15.11.2.tar.gz
+tar xzvf 15.11.2.tar.gz -C /usr/src
+rm 15.11.2.tar.gz
 
 #############################
 #Build & Install svxllink
 #############################
-cd /usr/src/svxlink-15.11.1/src
+cd /usr/src/svxlink-15.11.2/src
 mkdir build
 cd build
 cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD ..

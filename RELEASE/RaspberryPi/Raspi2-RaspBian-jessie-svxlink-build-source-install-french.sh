@@ -287,6 +287,7 @@ rm -rf Svxlink-Custom-Sounds
 ################################
 #Make and Link Custome Sound Dir
 ################################
+mkdir -p /usr/share/svxlink/sounds/fr_FR/Courtesy_Tones
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/fr_FR/Custom_Courtesy_Tones
 mkdir -p /root/sounds/Custom_Identification

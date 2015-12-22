@@ -333,10 +333,10 @@ ldconfig
 wget https://raw.githubusercontent.com/sm0svx/svxlink/master/src/svxlink/scripts/play_sound.sh
 wget https://raw.githubusercontent.com/sm0svx/svxlink/master/src/svxlink/scripts/filter_sounds.sh
 chmod +x play_sound.sh filter_sounds.sh
-git clone https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather.git orig-fr-FR-heather
-./filter_sounds.sh orig-fr-FR-heather fr-FR-heather-16k
-mv fr-FR-heather-16k /usr/share/svxlink/sounds/fr-FR
-rm -rf orig-fr-FR-heather *.bz2 play_sound.sh filter_sounds.sh
+git clone https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather.git orig-fr_FR-heather
+./filter_sounds.sh orig-fr_FR-heather fr_FR-heather-16k
+mv fr_FR-heather-16k /usr/share/svxlink/sounds/fr_FR
+rm -rf orig-fr_FR-heather *.bz2 play_sound.sh filter_sounds.sh
 
 ##############################
 #Install Courtesy Sound Files

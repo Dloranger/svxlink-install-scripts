@@ -1,9 +1,27 @@
 #!/bin/bash
 (
-###################################################################
+#######################################
 # Auto Install Configuration options
 # (set it, forget it, run it)
-###################################################################
+#######################################
+
+# ----- Start Edit Here ----- #
+####################################################
+# Repeater call sign
+# Please change this to match the repeater call sign
+####################################################
+cs="Set-This"
+
+# ----- Stop Edit Here ------- #
+######################################################################
+# check to see that the configuration portion of the script was edited
+######################################################################
+if [[ $cs == "Set-This" ]]; then
+  echo
+  echo "Looks like you need to configure the scirpt before running"
+  echo "Please configure the script and try again"
+  exit 0
+fi
 
 ##################################################################
 # check to confirm running as root. # First, we need to be root...
@@ -58,7 +76,7 @@ esac
 ########
 case $(uname -m) in armv[6-9]l)
 echo
-echo " ArmHF arm v6 v7 v8 v9 boards supported "
+echo " ArmHF arm v7 v8 v9 boards supported "
 echo
 esac
 
@@ -91,6 +109,11 @@ gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+
+#####################################
+#Update base os with new repo in list
+#####################################
+apt-get update
 
 ###################
 # Notes / Warnings
@@ -152,8 +175,76 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+############################
+# set usb power level
+############################
+cat >> /boot/config.txt << DELIM
 
-#################################################################################################
+#usb max current
+usb_max_current=1
+DELIM
+
+###############################
+# Disable the dphys swap file
+# Extend life of sd card
+###############################
+swapoff --all
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
+
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
+
+DELIM
+
+#############################
+#Setting Host/Domain name
+#############################
+cat > /etc/hostname << DELIM
+$cs-repeater
+DELIM
+
+#################
+#Setup /etc/hosts
+#################
+cat > /etc/hosts << DELIM
+127.0.0.1       localhost 
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+127.0.0.1       $cs-repeater
+
+DELIM
+
+#####################################
+#Update base os with new repo in list
+#####################################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
+
+################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
 # sources.list "deb http://httpredir.debian.org/debian/ jessie main".
@@ -163,21 +254,25 @@ DELIM
 #################################################################################################
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-#deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
 ############
-#Raspi Repo
-############
-cat > /etc/apt/sources.list.d/raspbian.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib non-free rpi
+# Raspi Repo
+###########################################################################
+# Put in Proper Location. All addon repos should be source.list.d sub dir
+###########################################################################
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+DELIM
+
+#############################
+# SvxLink Release Repo ArmHF
+#############################
+cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
+deb http://104.236.193.157/svxlink/release/debian/ jessie main
 DELIM
 
 ######################
@@ -185,86 +280,29 @@ DELIM
 ######################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-########################
-# Install Build Depends
-########################
-apt-get install -y g++ make cmake libsigc++-2.0-dev libgsm1-dev libpopt-dev libgcrypt11-dev \
-	libspeex-dev libspeexdsp-dev libasound2-dev alsa-utils vorbis-tools sox flac libsox-fmt-mp3 \
-	sqlite3 unzip opus-tools tcl8.6-dev tk8.6-dev alsa-base ntp groff doxygen libopus-dev \
-	librtlsdr-dev git-core uuid-dev git-core flite screen time inetutils-syslogd vim install-info \
-	whiptail dialog logrotate cron usbutils gawk watchdog python3-serial network-manager wiringpi
+##########################
+#Installing svxlink Deps
+##########################
+apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
+		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
+		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
+		git-core wiringpi
 
-##################################
-# Add User and include in groupds
-# Required for svxlink to install 
-# and run properly
-#################################
-# Sane defaults:
-[ -z "$SERVER_HOME" ] && SERVER_HOME=/usr/bin
-[ -z "$SERVER_USER" ] && SERVER_USER=svxlink
-[ -z "$SERVER_NAME" ] && SERVER_NAME="Svxlink-related Daemons"
-[ -z "$SERVER_GROUP" ] && SERVER_GROUP=daemon
-     
-# Groups that the user will be added to, if undefined, then none.
-ADDGROUP="audio dialout gpio daemon"
-     
-# create user to avoid running server as root
-# 1. create group if not existing
-if ! getent group | grep -q "^$SERVER_GROUP:" ; then
-   echo -n "Adding group $SERVER_GROUP.."
-   addgroup --quiet --system $SERVER_GROUP 2>/dev/null ||true
-   echo "..done"
-fi
-    
-# 2. create homedir if not existing
-test -d $SERVER_HOME || mkdir $SERVER_HOME
-    
-# 3. create user if not existing
-if ! getent passwd | grep -q "^$SERVER_USER:"; then
-   echo -n "Adding system user $SERVER_USER.."
-   adduser --quiet \
-           --system \
-           --ingroup $SERVER_GROUP \
-           --no-create-home \
-           --disabled-password \
-           $SERVER_USER 2>/dev/null || true
-   echo "..done"
-fi
-    
-# 4. adjust passwd entry
-usermod -c "$SERVER_NAME" \
-    -d $SERVER_HOME   \
-    -g $SERVER_GROUP  \
-    $SERVER_USER
-# 5. Add the user to the ADDGROUP group
+######################
+#Install svxlink
+#####################
+echo " Installing install deps and svxlink + remotetrx"
+apt-get -y --force-yes install svxlink-server remotetrx
 
-for group in $ADDGROUP ; do
-if test -n "$group"
-then
-    if ! groups $SERVER_USER | cut -d: -f2 | grep -qw "$group"; then
-	adduser $SERVER_USER "$group"
-    fi
-fi
-done
+#cleanup
+apt-get clean
 
-#########################
-# get svxlink src
-#########################
-wget https://github.com/kb3vgw/svxlink/archive/15.11.2.tar.gz
-tar xzvf 15.11.2.tar.gz -C /usr/src
-rm 15.11.2.tar.gz
+#making links...
+ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
-#############################
-#Build & Install svxllink
-#############################
-cd /usr/src/svxlink-15.11.2/src
-mkdir build
-cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD -DUSE_QT=NO ..
-make -j5
-make doc
-make install
-ldconfig
+#adding user svxlink to gpio user group
+usermod -a -G gpio svxlink
 
 #####################################################
 #Working on sounds pkgs for future release of svxlink
@@ -282,11 +320,11 @@ rm -rf orig-fr-FR-heather *.bz2 play_sound.sh filter_sounds.sh
 ##############################
 git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
 cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
-rm -rf Svxlink-Custom-Sounds
 
 ################################
 #Make and Link Custome Sound Dir
 ################################
+mkdir -p /usr/share/svxlink/sounds/fr_FR/Courtesy_Tones
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/fr_FR/Custom_Courtesy_Tones
 mkdir -p /root/sounds/Custom_Identification
@@ -305,6 +343,37 @@ git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
+###########################################################
+#Disable onboard hdmi soundcard not used in openrepeater
+#/boot/config.txt and /etc/modules
+###########################################################
+#/boot/config.txt
+sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+
+#/etc/modules
+sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+
+################################
+#Set up usb sound for alsa mixer
+################################
+if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+   echo "snd-usb-audio" >> /etc/modules
+fi
+FILE=/etc/modprobe.d/alsa-base.conf
+sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+fi
+
+##########################################
+#addon extra scripts for cloning the drive
+##########################################
+wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
+chmod +x rpi-clone
+cp rpi-clone /usr/bin
+rm rpi-clone
+
 ######################
 #Install svxlink Menu
 #####################
@@ -320,7 +389,7 @@ rm -rf svxlink-menu
 cat >> /root/.profile << DELIM
 
 if [ -f /usr/bin/svxlink_config ]; then
-        . /usr//bin/svxlink_config
+        . /usr/bin/svxlink_config
 fi
 
 DELIM
@@ -343,38 +412,6 @@ systemctl enable svxlink.service
 echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
 systemctl enable remotetrx.service
 
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cp rpi-clone /usr/bin
-rm rpi-clone
-
-###########################################################
-#Disable onboard hdmi soundcard not used in openrepeater
-###########################################################
-#/boot/config.txt
-sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-# Enable audio (loads snd_bcm2835)
-# dtparam=audio=on
-#/etc/modules
-sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-
-################################
-#Set up usb sound for alsa mixer
-################################
-if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
-   echo "snd-usb-audio" >> /etc/modules
-fi
-FILE=/etc/modprobe.d/alsa-base.conf
-sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
-mv -f ${FILE}.tmp ${FILE}
-if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
-  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
-fi
-
 ############################################
 #reboot sysem for all changes to take effect
 ############################################
@@ -382,4 +419,3 @@ echo " rebooting system forfull changes to take effect "
 reboot
 
 ) | tee /root/install.log
-

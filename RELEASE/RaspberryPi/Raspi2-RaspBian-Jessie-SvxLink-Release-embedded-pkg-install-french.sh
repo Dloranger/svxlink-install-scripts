@@ -307,7 +307,7 @@ usermod -a -G gpio svxlink
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather/releases/tag/15.11.2/svxlink-sounds-fr+FR-heather-16k-15.11.2.tar.bz2
+wget https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather/releases/tag/15.11.2/svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 mv fr_FR-heather-16k fr_FR
 mv fr_FR /usr/share/svxlink/sounds

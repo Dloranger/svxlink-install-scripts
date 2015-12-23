@@ -321,7 +321,7 @@ rm 15.11.2.tar.gz
 cd /usr/src/svxlink-15.11.2/src
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD -DUSE_QT=NO ..
+cmake -DCMAKE_INSTALL_PREFIX=/usr -DSYSCONF_INSTALL_DIR=/etc -DBUILD_STATIC_LIBS=YES -DWITH_SYSTEMD=YES -DUSE_QT=NO ..
 make -j5
 make doc
 make install

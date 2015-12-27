@@ -85,7 +85,7 @@ esac
 #############
 case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently UnSupported"
+echo " Intel / Amd boards Supported"
 echo
 esac
 
@@ -107,6 +107,7 @@ wget https://www.raspberrypi.org/raspberrypi.gpg.key
 gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
+
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 ###################

@@ -215,21 +215,18 @@ DELIM
 #Update base os
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
+apt-get install linux-image-c1
 
 #Install Dependancies
 apt-get install -y libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial screen time uuid vim install-info usbutils \
 		whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
-		git-core wiringpi
+		git-core wiringpi 
 
 # Install SvxLink
 		
 apt-get install -y --force-yes svxlink-server remotetrx 
-
-#Adding a link for customlogic and override tcl files for local events
-
-ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
 
 ###########
 # Clean Up

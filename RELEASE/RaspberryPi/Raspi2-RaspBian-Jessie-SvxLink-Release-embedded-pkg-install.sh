@@ -322,9 +322,9 @@ cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
 ################################
 #Make and Link Custome Sound Dir
 ################################
-mkdir -p /usr/share/svxlink/sounds/en_US/Courtesy_Tones
+mkdir -p /usr/share/svxlink/sounds/Courtesy_Tones
 mkdir -p /root/sounds/Custom_Courtesy_Tones
-ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/en_US/Custom_Courtesy_Tones
+ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
 mkdir -p /root/sounds/Custom_Identification
 ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/en_US/Custom_Identification
 

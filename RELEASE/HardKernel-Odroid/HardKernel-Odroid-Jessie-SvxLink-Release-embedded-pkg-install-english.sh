@@ -201,23 +201,31 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
+#########################
 # HardKernel-Odroid repo
+#########################
 cat > /etc/apt/sources.list.d/odroid.list << DELIM
 deb http://deb.odroid.in/c1/ trusty main
 deb http://deb.odroid.in/ trusty main
 DELIM
 
-# SVXLink Testing repo
+#######################
+# SVXLink Package repo
+#######################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
 deb http://104.236.193.157/svxlink/release/debian/ jessie main
 DELIM
 
+################
 #Update base os
+################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 apt-get install linux-image-c1
 
+#######################
 #Install Dependancies
+#######################
 apt-get install -y libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial screen time uuid vim install-info usbutils \
@@ -233,6 +241,12 @@ apt-get install -y --force-yes svxlink-server remotetrx
 ###########
 apt-get clean
 
+############################################
+#Backup Basic svxlink original config files
+############################################
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
+
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
@@ -245,18 +259,23 @@ rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 ##############################
 #Install Courtesy Sound Files
 ##############################
-git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
+https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
+tar xjvf 15.10.tar.gz
+mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
+mv Courtesy_Tones /usr/share/svxlink/sounds/
+rm 15.10.tar.gz
 
-cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
-
-################################
-#Make and Link Custome Sound Dir
-################################
-mkdir -p /usr/share/svxlink/sounds/Courtesy_Tones
+############################
+#Custom Courtesy Tones Dir
+############################
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
+
+############################
+#Custom_Identification Dir
+############################
 mkdir -p /root/sounds/Custom_Identification
-ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/en_US/Custom_Identification
+ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/Custom_Identification
 
 #################################
 # Make and link Local event.d dir
@@ -271,16 +290,16 @@ git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
-######################
-#Install svxlink Menu
-#####################
+############################
+#Custom svxlink Shell Menu
+############################
 git clone https://github.com/kb3vgw/svxlink-menu.git
 chmod +x svxlink-menu/svxlink_config
 cp -r svxlink-menu/svxlink_config /usr/bin
 rm -rf svxlink-menu
 
 ##############################################
-# Enable New shellmenu for logins  on enabled 
+# Enable New shell menu for logins  on enabled 
 # for root and only if the file exist
 ##############################################
 cat >> /root/.profile << DELIM
@@ -290,12 +309,6 @@ if [ -f /usr/bin/svxlink_config ]; then
 fi
 
 DELIM
-
-##################################
-#Backup Basic svxlink config files
-##################################
-mkdir -p /usr/share/examples/svxlink/conf
-cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
 #######################
 #Enable Systemd Service

@@ -145,7 +145,7 @@ DELIM
 echo
 echo "This Script Currently Requires a internet connection "
 echo
-wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
+wget -q --tries=10 --timeout=5 http://www.google.fr -O /tmp/index.google &> /dev/null
 
 if [ ! -s /tmp/index.google ];then
 	echo "No Internet connection. Please check ethernet cable"

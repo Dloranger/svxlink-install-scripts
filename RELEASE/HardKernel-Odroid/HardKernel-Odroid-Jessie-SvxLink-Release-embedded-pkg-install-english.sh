@@ -226,11 +226,11 @@ apt-get install linux-image-c1
 #######################
 #Install Dependancies
 #######################
-apt-get install -y libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 alsa-base bzip2 \
-		sudo gpsd gpsd-clients flite wvdial screen time uuid vim install-info usbutils \
-		whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
-		git-core wiringpi 
+apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2\
+		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
+		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
+		git-core wiringpi
 
 # Install SvxLink
 		
@@ -270,14 +270,10 @@ rm 15.10.tar.gz
 ############################
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
-
-############################
-#Custom_Identification Dir
-############################
 mkdir -p /root/sounds/Custom_Identification
 ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/Custom_Identification
 
-#################################
+################################
 # Make and link Local event.d dir
 #################################
 mkdir /etc/svxlink/local-events.d

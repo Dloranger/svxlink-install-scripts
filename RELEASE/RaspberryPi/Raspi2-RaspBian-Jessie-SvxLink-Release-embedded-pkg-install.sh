@@ -289,17 +289,19 @@ apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 l
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
 		git-core wiringpi
 
-######################
+#################
 #Install svxlink
-#####################
-echo " Installing install deps and svxlink + remotetrx"
+#################
 apt-get -y --force-yes install svxlink-server remotetrx
 
 #cleanup
 apt-get clean
 
-#making links...
-ln -s /etc/svxlink/local-events.d/ /usr/share/svxlink/events.d/local
+############################################
+#Backup Basic svxlink original config files
+############################################
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
 #adding user svxlink to gpio user group
 usermod -a -G gpio svxlink
@@ -316,17 +318,26 @@ rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 ##############################
 #Install Courtesy Sound Files
 ##############################
-git clone https://github.com/kb3vgw/Svxlink-Custom-Sounds.git
-cp -rp Svxlink-Custom-Sounds/* /usr/share/svxlink/sounds/
+https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
+tar xjvf 15.10.tar.gz
+mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
+mv Courtesy_Tones /usr/share/svxlink/sounds/
+rm 15.10.tar.gz
+
+############################
+#Custom Courtesy Tones Dir
+############################
+mkdir -p /root/sounds/Custom_Courtesy_Tones
+ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
 
 ################################
 #Make and Link Custome Sound Dir
 ################################
-mkdir -p /usr/share/svxlink/sounds/Courtesy_Tones
+
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
 mkdir -p /root/sounds/Custom_Identification
-ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/en_US/Custom_Identification
+ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/Custom_Identification
 
 #################################
 # Make and link Local event.d dir
@@ -391,12 +402,6 @@ if [ -f /usr/bin/svxlink_config ]; then
 fi
 
 DELIM
-
-##################################
-#Backup Basic svxlink config files
-##################################
-mkdir -p /usr/share/examples/svxlink/conf
-cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
 #######################
 #Enable Systemd Service

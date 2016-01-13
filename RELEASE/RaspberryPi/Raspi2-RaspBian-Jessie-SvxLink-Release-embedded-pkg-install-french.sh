@@ -120,21 +120,21 @@ apt-get update
 ###################
 echo
 cat << DELIM
-                   Not Ment For L.a.m.p Installs
+                   Concernant L.a.m.p Installs
 
                   L.A.M.P = Linux Apache Mysql PHP
 
-                 THIS IS A ONE TIME INSTALL SCRIPT
+             IL S AGIT D UN SCRIPT POUR UNE PREMIERE INSTALLATION
 
-             IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
+             IL N EST PAS DESTINE A ETRE UTILISE PLUSIEURS FOIS
 
-         This Script Is Ment To Be Run On A Fresh Install Of
+         Ce script est destiné à être exécuté sur une nouvelle installation de
 
                          Debian 8 (Jessie)
 
-     If It Fails For Any Reason Please Report To kb3vgw@gmail.com
+     Si vous avez un problème à l installation envoyer vos rapport à kb3vgw@gmail.com
 
-   Please Include Any Screen Output You Can To Show Where It Fails
+   Merci d inclure les messages d erreurs pour pouvoir vous aidez à les resoudre
 
 DELIM
 

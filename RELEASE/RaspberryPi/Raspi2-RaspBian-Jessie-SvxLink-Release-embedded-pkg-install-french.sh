@@ -1,417 +1,417 @@
-#! / bin / bash
+#!/bin/bash
 (
 #######################################
-# Auto Install Options de configuration
-# (Défini, l'oublier, l'exécuter)
+# Auto Install Configuration options
+# (set it, forget it, run it)
 #######################################
 
-# ----- Début Edition Voici ----- #
-################################################## ##
-Signe # Repeater d'appel
-# S'il vous plaît changer pour correspondre le signe répéteur d'appel
-################################################## ##
-cs = "Set-Ce"
+# ----- Start Edit Here ----- #
+####################################################
+# Repeater call sign
+# Please change this to match the repeater call sign
+####################################################
+cs="Set-This"
 
-# ----- Stop Edit Voici ------- #
-################################################## ####################
-# Vérifier pour voir ce que la partie de la configuration du script a été modifié
-################################################## ####################
-si [[== $ cs "Set-Ce"]]; puis
-  faire écho
-  echo "On dirait que vous avez besoin pour configurer la scirpt avant de lancer"
-  echo "S'il vous plaît configurer le script et essayez à nouveau"
-  exit 0
+# ----- Stop Edit Here ------- #
+######################################################################
+# check to see that the configuration portion of the script was edited
+######################################################################
+if [[ $cs == "Set-This" ]]; then
+  echo
+  echo "Looks like you need to configure the scirpt before running"
+  echo "Please configure the script and try again"
+  exit 0
 fi
 
-################################################## ################
-# Vérification afin de confirmer en tant que root. # D'abord, nous avons besoin d'être root ...
-################################################## ################
-if ["$ (id -u)" -ne "0"]; puis
-  "$ (le nom de base« 0 $ ») de sudo doit être exécuté en tant que root, s'il vous plaît entrer votre mot de passe sudo:" "$ 0" "$ @"
-  exit 0
+##################################################################
+# check to confirm running as root. # First, we need to be root...
+##################################################################
+if [ "$(id -u)" -ne "0" ]; then
+  sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
+  exit 0
 fi
-faire écho
-echo "On dirait que vous êtes root .... continuez!"
-faire écho
+echo
+echo "Looks Like you are root.... continuing!"
+echo
 
 ###############################################
-#if lsb_release est pas installé, il installe
+#if lsb_release is not installed it installs it
 ###############################################
-si [ ! -s / usr / bin / lsb_release]; puis
-apt-get update && apt-get -y installer lsb-release
+if [ ! -s /usr/bin/lsb_release ]; then
+	apt-get update && apt-get -y install lsb-release
 fi
 
 #################
-# Os / Distro Vérifier
+# Os/Distro Check
 #################
-lsb_release -c | grep -i Jessie &> / dev / null 2> & 1
-if [$? -eq 0]; puis
-echo "OK vous utilisez Debian 8: Jessie"
-autre
-echo "Ce script a été écrit pour Debian 8 Jessie"
-faire écho
-echo "Votre OS semble être:" lsb_release -a
-faire écho
-echo "Votre OS est pas actuellement pris en charge par ce script ..."
-faire écho
-echo "Quitter l'installation."
-Sortie
+lsb_release -c |grep -i jessie &> /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	echo " OK you are running Debian 8 : Jessie "
+else
+	echo " This script was written for Debian 8 Jessie "
+	echo
+	echo " Your OS appears to be: " lsb_release -a
+	echo
+	echo " Your OS is not currently supported by this script ... "
+	echo
+	echo " Exiting the install. "
+	exit
 fi
 
 ###########################################
-# Exécutez un système d'exploitation et le Programme compatabilty Vérifier
+# Run a OS and Platform compatabilty Check
 ###########################################
 ########
 # ARMEL
 ########
-cas $ (uname -m) dans ArMV [4-5] l)
-faire écho
-echo "Armel est currenty non pris en charge"
-faire écho
-Sortie
+case $(uname -m) in armv[4-5]l)
+echo
+echo " ArmEL is currenty UnSupported "
+echo
+exit
 esac
 
 ########
 # ARMHF
 ########
-cas $ (uname -m) dans ArMV [6-9] l)
-faire écho
-echo "armhf bras v7 conseils v8 v9 pris en charge"
-faire écho
+case $(uname -m) in armv[6-9]l)
+echo
+echo " ArmHF arm v7 v8 v9 boards supported "
+echo
 esac
 
 #############
-# Intel / AMD
+# Intel/AMD
 #############
-cas $ (uname -m) pour x86_64 | i [4-6] 86)
-faire écho
-echo "cartes Intel / Amd actuellement non pris en charge"
-faire écho
-Sortie
+case $(uname -m) in x86_64|i[4-6]86)
+echo
+echo " Intel / Amd boards currently UnSupported"
+echo
+exit
 esac
 
 #####################################
-OS de base #update avec le nouveau repo dans la liste
+#Update base os with new repo in list
 #####################################
-faire écho ""
-faire écho "------------------------------------------------ -------------- "
-echo "Mise à jour des clés de référentiel Raspberry Pi ..."
-faire écho "------------------------------------------------ -------------- "
-faire écho ""
-GPG --keyserver pgp.mit.edu --recv 8B48AD6246925553
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
 gpg --export --armor 8B48AD6246925553 | apt-key add -
-GPG --keyserver pgp.mit.edu --recv 7638D0442B90D010
-gpg --export --armor 7638D0442B90D010 | apt-key add -
-CBF8D6FD518E17E1 GPG --keyserver pgp.mit.edu
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
 gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
 wget https://www.raspberrypi.org/raspberrypi.gpg.key
 gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
-for i in mise à jour mise à niveau propre; faire apt-get -y --force-oui "$ {} i"; terminé
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 #####################################
-OS de base #update avec le nouveau repo dans la liste
+#Update base os with new repo in list
 #####################################
 apt-get update
 
 ###################
-# Notes / Avertissements
+# Notes / Warnings
 ###################
-faire écho
+echo
 cat << DELIM
-                   Non Ment Pour L.a.m.p Installe
+                   Not Ment For L.a.m.p Installs
 
-                  L.A.M.P = Linux Apache Mysql PHP
+                  L.A.M.P = Linux Apache Mysql PHP
 
-                 CECI EST UN SCRIPT INSTALLER UNE FOIS
+                 THIS IS A ONE TIME INSTALL SCRIPT
 
-             IL EST PAS destiné à être exécuté PLUSIEURS FOIS
+             IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
 
-         Ce script est Ment pour être exécuté sur une nouvelle installation de
+         This Script Is Ment To Be Run On A Fresh Install Of
 
-                         8 Debian (Jessie)
+                         Debian 8 (Jessie)
 
-     Si elle échoue pour quelque raison S'il vous plaît rapport au kb3vgw@gmail.com
+     If It Fails For Any Reason Please Report To kb3vgw@gmail.com
 
-   S'il vous plaît inclure toute sortie d'écran, vous pouvez pour montrer où il échoue
+   Please Include Any Screen Output You Can To Show Where It Fails
 
 DELIM
 
-################################################## #############################################
-#Testing Pour la connexion Internet. Tiré de et modifiée
-#http: //www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
-################################################## #############################################
-faire écho
-echo "Ce script nécessite Actuellement une connexion Internet"
-faire écho
-wget -q --tries = 10 = 5 --timeout http://www.google.com -O /tmp/index.google &> / dev / null
+###############################################################################################
+#Testing for internet connection. Pulled from and modified
+#http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
+###############################################################################################
+echo
+echo "This Script Currently Requires a internet connection "
+echo
+wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
 
-si [ ! -s /tmp/index.google], puis
-echo "Pas de connexion Internet. S'il vous plaît vérifier le câble Ethernet"
-/ bin / rm /tmp/index.google
-sortie 1
-autre
-echo "I Found Internet ... continue !!!!!"
-/ bin / rm /tmp/index.google
+if [ ! -s /tmp/index.google ];then
+	echo "No Internet connection. Please check ethernet cable"
+	/bin/rm /tmp/index.google
+	exit 1
+else
+	echo "I Found the Internet ... continuing!!!!!"
+	/bin/rm /tmp/index.google
 fi
-faire écho
-printf 'IP actuelle est:'; inet addr show dev eth0 ip | sed -n 's / ^ * inet * \ ([. 0-9] * \). * / \ 1 / p'
-faire écho
+echo
+printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
+echo
 
 ##############################
-#SET Un redémarrage si Kernel Panic
+#Set a reboot if Kernel Panic
 ##############################
-cat> /etc/sysctl.conf << DELIM
+cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
 ####################################
-# Set fs à courir dans un lecteur virtuel de tempfs
+# Set fs to run in a tempfs ramdrive
 ####################################
-cat >> / etc / fstab << DELIM
-tmpfs / tmp tmpfs nodev, nosuid, mode = 1,777 0 0
-tmpfs / var / tmp tmpfs nodev, nosuid, mode = 1,777 0 0
-tmpfs / var / cache / apt / tmpfs archives size = 100M, par défaut, noexec, nosuid, nodev, mode = 0755 0 0
+cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
 ############################
-# Définir le niveau d'alimentation USB
+# set usb power level
 ############################
-cat >> << DELIM /boot/config.txt
+cat >> /boot/config.txt << DELIM
 
-actuelle #usb max
-usb_max_current = 1
+#usb max current
+usb_max_current=1
 DELIM
 
 ###############################
-# Désactiver le fichier de swap dphys
-# Pour prolonger la durée de la carte SD
+# Disable the dphys swap file
+# Extend life of sd card
 ###############################
 swapoff --all
-apt-get -y retirer dphys-swapfile
-rm -rf / var / swap
+apt-get -y remove dphys-swapfile
+rm -rf /var/swap
 
-################################################## ###
-son #fix usb / question nic afin interface réseau obtient IP
-################################################## ###
-cat> / etc / network / interfaces << DELIM
-lo auto eth0
-iface lo inet bouclage
-iNet le DHCP du iface
+#####################################################
+#fix usb sound/nic issue so network interface gets IP
+#####################################################
+cat > /etc/network/interfaces << DELIM
+auto lo eth0
+iface lo inet loopback
+iface eth0 inet dhcp
 
 DELIM
 
 #############################
-#REGLAGES Hôte / Nom de domaine
+#Setting Host/Domain name
 #############################
-cat> / etc / hostname << DELIM
-$ cs-répéteur
+cat > /etc/hostname << DELIM
+$cs-repeater
 DELIM
 
 #################
-#Setup / Etc / hosts
+#Setup /etc/hosts
 #################
-cat> / etc / hosts << DELIM
-Localhost 127.0.0.1
-:: 1 localhost ip6-localhost ip6-bouclage
-FE00 :: 0 ip6-localnet
-ff00 :: 0 ip6-mcastprefix
-FF02 :: 1 IP6-allnodes
-FF02 :: 2 IP6-allrouters
+cat > /etc/hosts << DELIM
+127.0.0.1       localhost 
+::1             localhost ip6-localhost ip6-loopback
+fe00::0         ip6-localnet
+ff00::0         ip6-mcastprefix
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
 
-127.0.0.1 $ cs-répéteur
+127.0.0.1       $cs-repeater
 
 DELIM
 
 #####################################
-OS de base #update avec le nouveau repo dans la liste
+#Update base os with new repo in list
 #####################################
-faire écho ""
-faire écho "------------------------------------------------ -------------- "
-echo "Mise à jour des clés de référentiel Raspberry Pi ..."
-faire écho "------------------------------------------------ -------------- "
-faire écho ""
-GPG --keyserver pgp.mit.edu --recv 8B48AD6246925553
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
 gpg --export --armor 8B48AD6246925553 | apt-key add -
-GPG --keyserver pgp.mit.edu --recv 7638D0442B90D010
-gpg --export --armor 7638D0442B90D010 | apt-key add -
-CBF8D6FD518E17E1 GPG --keyserver pgp.mit.edu
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
 gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
 wget https://www.raspberrypi.org/raspberrypi.gpg.key
 gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
-for i in mise à jour mise à niveau propre; faire apt-get -y --force-oui "$ {} i"; terminé
+for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
-################################################## ##############################################
-# Réglage apt_get d'utiliser le httpredirecter pour obtenir
-# Pour avoir <APT> sélectionner automatiquement un miroir proche de chez vous, utilisez le redirecteur Geo-IP dans votre
-# Sources.list "deb http://httpredir.debian.org/debian/ Jessie principale".
-# Voir http://httpredir.debian.org/ pour plus d'informations. Le redirecteur utilise le protocole HTTP redirections 302
-# NON DNS pour servir du contenu de sorte est sûr à utiliser avec Google DNS.
-# Voir aussi <qui httpredir.debian.org>. Ce service est identique à http.debian.net.
-################################################## ###############################################
-cat> «/etc/apt/sources.list» << DELIM
-deb http://httpredir.debian.org/debian/ Jessie main contrib non-free
+################################################################################################
+# Setting apt_get to use the httpredirecter to get
+# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
+# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
+# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
+# not dnS to serve content so is safe to use with Google dnS.
+# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
+#################################################################################################
+cat > "/etc/apt/sources.list" << DELIM
+deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb http://httpredir.debian.org/debian/ Jessie-backports main contrib non-free
+deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 
 DELIM
 
 ############
 # Raspi Repo
-################################################## #########################
-# Mettre en propre locatif. Tous repos addon devraient être source.list.d dir sous
-################################################## #########################
-cat> /etc/apt/sources.list.d/raspi.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ Jessie main contrib firmware RPI non-libre
+###########################################################################
+# Put in Proper Location. All addon repos should be source.list.d sub dir
+###########################################################################
+cat > /etc/apt/sources.list.d/raspi.list << DELIM
+deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
 #############################
-# SvxLink sortie Repo armhf
+# SvxLink Release Repo ArmHF
 #############################
-cat> "/etc/apt/sources.list.d/svxlink.list" << DELIM
-Jessie la principale deb
+cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
+deb http://104.236.193.157/svxlink/release/debian/ jessie main
 DELIM
 
 ######################
-OS de base #update
+#Update base os
 ######################
-for i in mise à jour mise à niveau propre, ne apt-get -y "$ {} i"; terminé
+for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 ##########################
-#Installing Deps de svxlink
+#Installing svxlink Deps
 ##########################
 apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-NTP libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
-sudo gpsd gpsd-Flite clients inetutils-syslogd wvdial écran temps vim UUID install-info \
-usbutils logrotate dialogue cron gawk surveillance python3-série network-manager whiptail \
-git-core wiringpi
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
+		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
+		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
+		git-core wiringpi
 
 #################
-Svxlink #Install
+#Install svxlink
 #################
-apt-get -y --force-oui installer remotetrx svxlink-serveur
+apt-get -y --force-yes install svxlink-server remotetrx
 
-#nettoyer
+#cleanup
 apt-get clean
 
 ############################################
-Les fichiers de configuration d'origine de #Backup de base
+#Backup Basic svxlink original config files
 ############################################
-mkdir -p / usr / share / examples / svxlink / conf
-cp -rp / etc / svxlink / * / usr / share / examples / svxlink / conf
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
-#adding utilisateur svxlink au groupe d'utilisateurs gpio
+#adding user svxlink to gpio user group
 usermod -a -G gpio svxlink
 
-################################################## ###
-#Working Sur les sons pkgs pour la libération future de svxlink
-################################################## ###
+#####################################################
+#Working on sounds pkgs for future release of svxlink
+#####################################################
 wget https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather/releases/download/15.11.2/svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
-svxlink-sons-fr_FR-bruyères-16k-15.11.2.tar.bz2 tar
-mv fr_FR-bruyères 16k fr_FR
-fr_FR mv / usr / share / svxlink / sons
-rm svxlink-sons-fr_FR-bruyères-16k-15.11.2.tar.bz2
+tar xjvf svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
+mv fr_FR-heather-16k fr_FR
+mv fr_FR /usr/share/svxlink/sounds
+rm svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 
 ##############################
-#Install Courtoisie fichiers audio
+#Install Courtesy Sound Files
 ##############################
 https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
-goudron xjvf 15.10.tar.gz
+tar xjvf 15.10.tar.gz
 mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
-Courtesy_Tones mv / usr / share / svxlink / sons /
+mv Courtesy_Tones /usr/share/svxlink/sounds/
 rm 15.10.tar.gz
 
 ################################
-#make Et Link Custome son Dir
+#Make and Link Custome Sound Dir
 ################################
-mkdir -p / root / sons / Custom_Courtesy_Tones
-sons / Custom_Courtesy_Tones ln -s / root / sons / Custom_Courtesy_Tones / usr / share / svxlink /
-mkdir -p / root / sons / Custom_Identification
-ln -s / root / sons / Custom_identification / usr / share / svxlink / sons / Custom_Identification
+mkdir -p /root/sounds/Custom_Courtesy_Tones
+ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
+mkdir -p /root/sounds/Custom_Identification
+ln -s /root/sounds/Custom_identification /usr/share/svxlink/sounds/Custom_Identification
 
 #################################
-# Marque et relier event.d locale dir
+# Make and link Local event.d dir
 #################################
 mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
 ###########################
-#Install Fichiers Logic personnalisée
+#Install Custom Logic Files
 ###########################
 git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
-Svxlink-Custom-Logic / * /etc/svxlink/local-events.d cp
+cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
 
-################################################## #########
-#Disable Bord carte son HDMI pas utilisé dans openrepeater
-# / boot / config.txt et / etc / modules
-################################################## #########
-# / boot / config.txt
-sed -i /boot/config.txt -e "s # dtparam = = audio sur # \ # dtparam = = audio sur #"
+###########################################################
+#Disable onboard hdmi soundcard not used in openrepeater
+#/boot/config.txt and /etc/modules
+###########################################################
+#/boot/config.txt
+sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
-# / etc / modules
--i sed / etc / modules -e "# SND-bcm2835 # \ # SND-bcm2835 N °"
+#/etc/modules
+sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
 ################################
-#SET Jusqu'à son USB pour mixer alsa
+#Set up usb sound for alsa mixer
 ################################
-si (`grep" SND-usb-audio "/ etc / modules> / dev / null`!); puis
-   ECHO / etc / modules "SND-USB-audio" >>
+if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
+   echo "snd-usb-audio" >> /etc/modules
 fi
-FILE = / etc / modprobe.d / alsa-base.conf
-sed "de / options SND-usb-audio index = -2 / les options SND-usb-audio index = 0 /" $ FILE> $ {FILE} .tmp
-$ {FILE} .tmp de $ de mv {FILE}
-if (! `grep" options SND-usb-audio nrpacks = 1 "$ {FILE}> / dev / null`); puis
-  echo "nrpacks les options SND-usb-audio = 1 index = 0" >> $ {FILE}
+FILE=/etc/modprobe.d/alsa-base.conf
+sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
+  echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 fi
 
 ##########################################
-#addon scripts supplémentaires pour le clonage du disque
+#addon extra scripts for cloning the drive
 ##########################################
 wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod + x RPI-clone
-cp RPI-clone / usr / bin
-rm RPI-clone
+chmod +x rpi-clone
+cp rpi-clone /usr/bin
+rm rpi-clone
 
 ######################
-#Install De Menu
+#Install svxlink Menu
 #####################
 git clone https://github.com/kb3vgw/svxlink-menu.git
-chmod + x svxlink menu / svxlink_config
-cp -r svxlink menu / svxlink_config / usr / bin
-rm -rf svxlink menu
+chmod +x svxlink-menu/svxlink_config
+cp -r svxlink-menu/svxlink_config /usr/bin
+rm -rf svxlink-menu
 
 ##############################################
-# Activer New shellmenu pour les connexions sur les permis
-# Pour la racine et seulement si le fichier existe
+# Enable New shellmenu for logins  on enabled 
+# for root and only if the file exist
 ##############################################
-cat >> << DELIM /root/.profile
+cat >> /root/.profile << DELIM
 
-if [-f / usr / bin / svxlink_config]; puis
-        . / usr / bin / svxlink_config
+if [ -f /usr/bin/svxlink_config ]; then
+        . /usr/bin/svxlink_config
 fi
 
 DELIM
 
 #######################
-#Active Service Systemd
-#######################
-echo "Activation de la Svxlink de Service Daemon"
-systemctl permettre svxlink.service
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink systemd Service Daemon "
+systemctl enable svxlink.service
 
 #######################
-#Active Service Systemd
-#######################
-echo "Activation de la Svxlink Remotetrx systemd démon du service"
-systemctl permettre remotetrx.service
+#Enable Systemd Service
+####################### 
+echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
+systemctl enable remotetrx.service
 
 ############################################
-#reboot sysem pour tous les changements prennent effet
+#reboot sysem for all changes to take effect
 ############################################
-echo "système de redémarrer for full modifications prennent effet"
-redémarer
+echo " rebooting system forfull changes to take effect "
+reboot
 
 ) | tee /root/install.log

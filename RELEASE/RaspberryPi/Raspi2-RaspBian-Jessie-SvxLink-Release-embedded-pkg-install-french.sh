@@ -18,8 +18,8 @@ cs="Set-This"
 ######################################################################
 if [[ $cs == "Set-This" ]]; then
   echo
-  echo "Looks like you need to configure the scirpt before running"
-  echo "Please configure the script and try again"
+  echo "On dirait que vous avez besoin pour configurer la scirpt avant d'exécuter"
+  echo "Merci de configurer le script et d'essayer à nouveau"
   exit 0
 fi
 
@@ -27,11 +27,11 @@ fi
 # check to confirm running as root. # First, we need to be root...
 ##################################################################
 if [ "$(id -u)" -ne "0" ]; then
-  sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
+  sudo -p "$(basename "$0") Vous devez être en root, entrer votre mot de passe : " "$0" "$@"
   exit 0
 fi
 echo
-echo "Looks Like you are root.... continuing!"
+echo "Vous êtes maintenant en root.... continuons!"
 echo
 
 ###############################################
@@ -46,15 +46,15 @@ fi
 #################
 lsb_release -c |grep -i jessie &> /dev/null 2>&1
 if [ $? -eq 0 ]; then
-	echo " OK you are running Debian 8 : Jessie "
+	echo " OK vous êtes sous Debian 8 : Jessie "
 else
-	echo " This script was written for Debian 8 Jessie "
+	echo " Ce script est ecrit pour Debian 8 Jessie "
 	echo
-	echo " Your OS appears to be: " lsb_release -a
+	echo " Votre OS semble être: " lsb_release -a
 	echo
-	echo " Your OS is not currently supported by this script ... "
+	echo " Votre OS  actuel est supporté par ce script ... "
 	echo
-	echo " Exiting the install. "
+	echo " Quitter l'install. "
 	exit
 fi
 
@@ -66,7 +66,7 @@ fi
 ########
 case $(uname -m) in armv[4-5]l)
 echo
-echo " ArmEL is currenty UnSupported "
+echo " ArmEL n'est pas supporté "
 echo
 exit
 esac
@@ -76,7 +76,7 @@ esac
 ########
 case $(uname -m) in armv[6-9]l)
 echo
-echo " ArmHF arm v7 v8 v9 boards supported "
+echo " Cartes ArmHF arm v7 v8 v9 supportées "
 echo
 esac
 
@@ -85,7 +85,7 @@ esac
 #############
 case $(uname -m) in x86_64|i[4-6]86)
 echo
-echo " Intel / Amd boards currently UnSupported"
+echo " Carte Intel / Amd actuellement non supportées"
 echo
 exit
 esac
@@ -95,7 +95,7 @@ esac
 #####################################
 echo ""
 echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
+echo " Mise à jour des clés de référentiel Raspberry Pi..."
 echo "--------------------------------------------------------------"
 echo ""
 gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
@@ -143,16 +143,16 @@ DELIM
 #http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
 ###############################################################################################
 echo
-echo "This Script Currently Requires a internet connection "
+echo "Ce script nécessite actuellement une connexion Internet "
 echo
-wget -q --tries=10 --timeout=5 http://www.google.fr -O /tmp/index.google &> /dev/null
+wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
 
 if [ ! -s /tmp/index.google ];then
-	echo "No Internet connection. Please check ethernet cable"
+	echo "Pas de connexion Internet. Verfifier la connexion de votre cable ethernet"
 	/bin/rm /tmp/index.google
 	exit 1
 else
-	echo "I Found the Internet ... continuing!!!!!"
+	echo "J'ai trouvé Internet ... continuons!!!!!"
 	/bin/rm /tmp/index.google
 fi
 echo
@@ -229,7 +229,7 @@ DELIM
 #####################################
 echo ""
 echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
+echo "Mise à jour des clés de référentiel Raspberry Pi ..."
 echo "--------------------------------------------------------------"
 echo ""
 gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
@@ -399,19 +399,19 @@ DELIM
 #######################
 #Enable Systemd Service
 ####################### 
-echo " Enabling the Svxlink systemd Service Daemon "
+echo " Activation du Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
 
 #######################
 #Enable Systemd Service
 ####################### 
-echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
+echo " Activation du Svxlink Remotetrx systemd Service Daemon "
 systemctl enable remotetrx.service
 
 ############################################
 #reboot sysem for all changes to take effect
 ############################################
-echo " rebooting system forfull changes to take effect "
+echo " reboot le système pour la prise en compte des changement "
 reboot
 
 ) | tee /root/install.log

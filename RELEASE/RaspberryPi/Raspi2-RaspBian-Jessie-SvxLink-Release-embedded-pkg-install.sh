@@ -324,16 +324,9 @@ mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
 mv Courtesy_Tones /usr/share/svxlink/sounds/
 rm 15.10.tar.gz
 
-############################
-#Custom Courtesy Tones Dir
-############################
-mkdir -p /root/sounds/Custom_Courtesy_Tones
-ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
-
 ################################
 #Make and Link Custome Sound Dir
 ################################
-
 mkdir -p /root/sounds/Custom_Courtesy_Tones
 ln -s /root/sounds/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
 mkdir -p /root/sounds/Custom_Identification

@@ -231,8 +231,6 @@ DELIM
 ################
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
-apt-get install linux-image-c1
-
 #######################
 #Install Dependancies
 #######################

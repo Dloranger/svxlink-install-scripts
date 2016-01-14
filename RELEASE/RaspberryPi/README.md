@@ -12,6 +12,7 @@ https://downloads.raspberrypi.org/raspbian_lite_latest
 - sudo su to root
 - Execute "apt-get update && apt-get dist-upgrade"
 - Use raspi-config to configure Timezone, Locale, Check GPU Mem(0), and Expand FS
+- enable the following kernel modules spi-bcm2708 i2c-bcm2708 i2c-dev w1-gpio w1-therm
 - Reboot Pi.
 - Connect to Pi using SSH.  Login as pi (password raspberry).
 - sudo su to root

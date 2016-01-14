@@ -238,10 +238,12 @@ apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 l
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2\
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
-		git-core wiringpi python-pip
+		git-core wiringpi python-pip libsigc++-2.0-0c2a
+
+#cleanup
+apt-get clean
 
 # Install SvxLink
-		
 apt-get install -y --force-yes svxlink-server remotetrx 
 
 ###########

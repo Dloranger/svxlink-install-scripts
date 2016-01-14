@@ -159,11 +159,21 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
+#####################
+#ModProbe moules
+####################
+modprobe spicc
+modprobe ami_i2c
+modprobe w1-gpio
+modprobe w1-therm
+
 ######################
 # Enable the spi & i2c
 ######################
 echo "spicc" >> /etc/modules
 echo "aml_i2c" >> /etc/modules
+echo "w1-gpio" >> /etc/modules
+echo "w1-therm" >> /etc/modules
 
 #############################
 #Setting Host/Domain name
@@ -317,6 +327,11 @@ systemctl enable svxlink.service
 ####################### 
 echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
 systemctl enable remotetrx.service
+
+##########
+#Set RTC 
+#########
+hwclock -w
 
 ############################################
 #reboot sysem for all changes to take effect

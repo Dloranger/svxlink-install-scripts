@@ -16,7 +16,7 @@ https://downloads.raspberrypi.org/raspbian_lite_latest
 - Reboot Pi.
 - Connect to Pi using SSH.  Login as pi (password raspberry).
 - sudo su to root
-- Transfer ORP install_script to Pi.  (wget or scp or flashdrive)
+- Transfer svxlink install_script to Pi.  (wget or scp or flashdrive)
 - Edit SvxLink install_script (nano install_script).   Set Callsign.
 - Change permissions on install_script (chmod +x install_script)
 - Execute install_script ( ./install_script )

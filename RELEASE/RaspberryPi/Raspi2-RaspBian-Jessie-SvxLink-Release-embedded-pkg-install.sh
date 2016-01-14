@@ -368,14 +368,6 @@ if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
   echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 fi
 
-##########################################
-#addon extra scripts for cloning the drive
-##########################################
-wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-chmod +x rpi-clone
-cp rpi-clone /usr/bin
-rm rpi-clone
-
 ######################
 #Install svxlink Menu
 #####################

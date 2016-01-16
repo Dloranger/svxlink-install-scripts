@@ -312,7 +312,7 @@ usermod -a -G gpio svxlink
 #####################################################
 #Working on sounds pkgs for future release of svxlink
 #####################################################
-wget https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather/releases/download/15.11.2/svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
+wget --no-check-certificate https://github.com/kb3vgw/svxlink-sounds-fr_FR-heather/releases/download/15.11.2/svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 mv fr_FR-heather-16k fr_FR
 mv fr_FR /usr/share/svxlink/sounds
@@ -321,7 +321,7 @@ rm svxlink-sounds-fr_FR-heather-16k-15.11.2.tar.bz2
 ##############################
 #Install Courtesy Sound Files
 ##############################
-wget https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
+wget --no-check-certificate https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
 tar xjvf 15.10.tar.gz
 mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
 mv Courtesy_Tones /usr/share/svxlink/sounds/

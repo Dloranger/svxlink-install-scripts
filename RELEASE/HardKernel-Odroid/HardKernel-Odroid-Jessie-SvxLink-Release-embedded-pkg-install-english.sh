@@ -175,27 +175,6 @@ echo "aml_i2c" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
 
-#############################
-#Setting Host/Domain name
-#############################
-cat > /etc/hostname << DELIM
-$cs-repeater
-DELIM
-
-#################
-#Setup /etc/hosts
-#################
-cat > /etc/hosts << DELIM
-127.0.0.1       localhost
-::1             localhost ip6-localhost ip6-loopback
-fe00::0         ip6-localnet
-ff00::0         ip6-mcastprefix
-ff02::1         ip6-allnodes
-ff02::2         ip6-allrouters
-
-127.0.0.1       $cs-repeater
-DELIM
-
 #################################################################################################
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -269,7 +248,7 @@ rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
 ##############################
 #Install Courtesy Sound Files
 ##############################
-wget https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.tar.gz
+wget https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.1.tar.gz
 tar xzvf 15.10.tar.gz
 mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
 mv Courtesy_Tones /usr/share/svxlink/sounds/

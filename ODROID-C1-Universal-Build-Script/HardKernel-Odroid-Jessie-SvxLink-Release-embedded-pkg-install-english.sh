@@ -5,24 +5,6 @@
 # (set it, forget it, run it)
 ###################################################################
 
-# ----- Start Edit Here ----- #
-####################################################
-# Repeater call sign
-# Please change this to match the repeater call sign
-####################################################
-cs="Set-This"
-
-# ----- Stop Edit Here ------- #
-######################################################################
-# check to see that the configuration portion of the script was edited
-######################################################################
-if [[ $cs == "Set-This" ]]; then
-  echo
-  echo "Looks like you need to configure the scirpt before running"
-  echo "Please configure the script and try again"
-  exit 0
-fi
-
 ##################################################################
 # check to confirm running as root. # First, we need to be root...
 ##################################################################
@@ -80,45 +62,6 @@ echo " ArmHF arm v7 v8 v9 boards supported "
 echo
 esac
 
-#############
-# Intel/AMD
-#############
-case $(uname -m) in x86_64|i[4-6]86)
-echo
-echo " Intel / Amd boards currently Support is comming soon "
-echo
-exit
-esac
-
-###################
-# Notes / Warnings
-###################
-echo
-cat << DELIM
-                   Not Ment For L.a.m.p Installs
-
-                  L.A.M.P = Linux Apache Mysql PHP
-
-                 THIS IS A ONE TIME INSTALL SCRIPT
-
-             IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
-
-         This Script Is Ment To Be Run On A Fresh Install Of
-
-                         Debian 8 (Jessie)
-
-     If It Fails For Any Reason Please Report To kb3vgw@gmail.com
-
-   Please Include Any Screen Output You Can To Show Where It Fails
-   
-  Note:
-
-  Pre-Install Information:
-
-       This script uses Sqlite by default. No plans to use Other DB. 
-
-DELIM
-
 ###############################################################################################
 #Testing for internet connection. Pulled from and modified
 #http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
@@ -146,7 +89,7 @@ echo
 ##############################
 #Set a reboot if Kernel Panic
 ##############################
-cat > /etc/sysctl.conf << DELIM
+cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
@@ -162,7 +105,7 @@ DELIM
 #ModProbe moules
 ####################
 modprobe spicc
-modprobe ami_i2c
+modprobe aml_i2c
 modprobe w1-gpio
 modprobe w1-therm
 
@@ -173,29 +116,6 @@ echo "spicc" >> /etc/modules
 echo "aml_i2c" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
-
-#################################################################################################
-# Setting apt_get to use the httpredirecter to get
-# To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
-# sources.list "deb http://httpredir.debian.org/debian/ jessie main".
-# See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
-# not dnS to serve content so is safe to use with Google dnS.
-# See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
-#################################################################################################
-cat > "/etc/apt/sources.list" << DELIM
-deb http://httpredir.debian.org/debian/ jessie main contrib non-free
-deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
-deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
-DELIM
-
-#########################
-# HardKernel-Odroid repo
-#########################
-cat > /etc/apt/sources.list.d/odroid.list << DELIM
-deb http://deb.odroid.in/c1/ trusty main
-deb http://deb.odroid.in/ trusty main
-DELIM
 
 #######################
 # SVXLink Package repo
@@ -212,11 +132,10 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #######################
 #Install Dependancies
 #######################
-apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2\
-		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
-		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
-		git-core wiringpi python-pip libsigc++-2.0-0c2a
+apt-get install -y libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd \
+		gpsd-clients flite wvdial inetutils-syslogd screen vim usbutils whiptail dialog \
+		logrotate cron gawk python3-serial git-core wiringpi python-pip libsigc++-2.0-0c2a
 
 #cleanup
 apt-get clean
@@ -235,23 +154,14 @@ apt-get clean
 mkdir -p /usr/share/examples/svxlink/conf
 cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
-#####################################################
-#Working on sounds pkgs for future release of svxlink
-#####################################################
-wget https://github.com/kb3vgw/svxlink-sounds-en_US-heather/releases/download/15.11.2/svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
-tar xjvf svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
-mv en_US-heather-16k en_US
-mv en_US /usr/share/svxlink/sounds
-rm svxlink-sounds-en_US-heather-16k-15.11.2.tar.bz2
-
 ##############################
 #Install Courtesy Sound Files
 ##############################
-wget https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.1.tar.gz
-tar xzvf 15.10.tar.gz
-mv Svxlink-Courtesy_Tones-15.10 Courtesy_Tones
+wget --no-check-certificate http://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.1.tar.gz
+tar xzvf 15.10.1.tar.gz
+mv Svxlink-Courtesy_Tones-15.10.1 Courtesy_Tones
 mv Courtesy_Tones /usr/share/svxlink/sounds/
-rm 15.10.tar.gz
+rm 15.10.1.tar.gz
 
 ################################
 #Make and Link Custome Sound Dir
@@ -314,7 +224,7 @@ hwclock -w
 ############################################
 #reboot sysem for all changes to take effect
 ############################################
-echo " rebooting system forfull changes to take effect "
-reboot
+#echo " rebooting system forfull changes to take effect "
+#reboot
 
 ) | tee /root/install.log

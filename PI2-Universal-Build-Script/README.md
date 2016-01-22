@@ -17,8 +17,7 @@ https://downloads.raspberrypi.org/raspbian_lite_latest
 - Connect to Pi using SSH.  Login as pi (password raspberry).
 - "sudo su" to root
 - Transfer svxlink install_script to Pi.  (download, wget, scp or flashdrive)
-- wget https://raw.githubusercontent.com/kb3vgw/svxlink-scripts/master/RELEASE/RaspberryPi/Raspi2-RaspBian-Jessie-SvxLink-Release-embedded-pkg-install.sh
-- Edit SvxLink install_script (nano install_script). Set Callsign. CS="Set-This"
+- wget https://raw.githubusercontent.com/kb3vgw/svxlink-scripts/master/PI2-Universal-Build-Script/Raspi2-RaspBian-Jessie-SvxLink-Universal-install.sh
 - Change permissions on install_script (chmod +x install_script)
 - Execute install_script ( ./install_script )
 - Automatic Reboot

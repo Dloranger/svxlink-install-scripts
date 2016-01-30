@@ -16,13 +16,6 @@ echo
 echo "Looks Like you are root.... continuing!"
 echo
 
-###############################################
-#if lsb_release is not installed it installs it
-###############################################
-if [ ! -s /usr/bin/lsb_release ]; then
-	apt-get update && apt-get -y install lsb-release
-fi
-
 #################
 # Os/Distro Check
 #################
@@ -133,9 +126,10 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #Install Dependancies
 #######################
 apt-get install -y libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd \
-		gpsd-clients flite wvdial inetutils-syslogd screen vim usbutils whiptail dialog \
-		logrotate cron gawk python3-serial git-core wiringpi python-pip libsigc++-2.0-0c2a
+		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd gpsd-clients \
+		flite wvdial inetutils-syslogd screen vim usbutils logrotate cron gawk python3-serial \
+		git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
+		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2
 
 #cleanup
 apt-get clean

@@ -129,7 +129,7 @@ apt-get install -y libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd gpsd-clients \
 		flite wvdial inetutils-syslogd screen vim usbutils logrotate cron gawk python3-serial \
 		git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
-		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2
+		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban
 
 #cleanup
 apt-get clean
@@ -182,8 +182,8 @@ rm -rf Svxlink-Custom-Logic
 #Custom svxlink Shell Menu
 ############################
 git clone https://github.com/kb3vgw/svxlink-menu.git
-chmod +x svxlink-menu/svxlink_config
-cp -r svxlink-menu/svxlink_config /usr/bin
+chmod +x svxlink-menuarris_config
+cp -r svxlink-menu/arris_config /usr/bin
 rm -rf svxlink-menu
 
 ##############################################
@@ -193,7 +193,7 @@ rm -rf svxlink-menu
 cat >> /root/.profile << DELIM
 
 if [ -f /usr/bin/svxlink_config ]; then
-        . /usr//bin/svxlink_config
+        . /usr//bin/arris_config
 fi
 
 DELIM

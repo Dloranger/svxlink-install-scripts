@@ -349,8 +349,8 @@ fi
 #Install svxlink Menu
 #####################
 git clone https://github.com/kb3vgw/svxlink-menu.git
-chmod +x svxlink-menu/svxlink_config
-cp -r svxlink-menu/svxlink_config /usr/bin
+chmod +x svxlink-menu/arris_config
+cp -r svxlink-menu/arris_config /usr/bin
 rm -rf svxlink-menu
 
 ##############################################
@@ -359,8 +359,8 @@ rm -rf svxlink-menu
 ##############################################
 cat >> /root/.profile << DELIM
 
-if [ -f /usr/bin/svxlink_config ]; then
-        . /usr/bin/svxlink_config
+if [ -f /usr/bin/arris_config ]; then
+        . /usr/bin/arris_config
 fi
 
 DELIM

@@ -181,10 +181,10 @@ rm -rf Svxlink-Custom-Logic
 ############################
 #Custom svxlink Shell Menu
 ############################
-git clone https://github.com/kb3vgw/svxlink-menu.git
-chmod +x svxlink-menuarris_config
-cp -r svxlink-menu/arris_config /usr/bin
-rm -rf svxlink-menu
+git clone https://github.com/kb3vgw/arris-menu.git
+chmod +x arris-menu/arris_config
+cp -r arris-menu/arris_config /usr/bin
+rm -rf arris-menu
 
 ##############################################
 # Enable New shell menu for logins  on enabled 
@@ -192,7 +192,7 @@ rm -rf svxlink-menu
 ##############################################
 cat >> /root/.profile << DELIM
 
-if [ -f /usr/bin/svxlink_config ]; then
+if [ -f /usr/bin/arris_config ]; then
         . /usr//bin/arris_config
 fi
 

@@ -348,10 +348,10 @@ fi
 ######################
 #Install svxlink Menu
 #####################
-git clone https://github.com/kb3vgw/svxlink-menu.git
-chmod +x svxlink-menu/arris_config
-cp -r svxlink-menu/arris_config /usr/bin
-rm -rf svxlink-menu
+git clone https://github.com/kb3vgw/arris-menu.git
+chmod +x arris-menu/arris_config
+cp -r arris-menu/arris_config /usr/bin
+rm -rf arris-menu
 
 ##############################################
 # Enable New shellmenu for logins  on enabled 

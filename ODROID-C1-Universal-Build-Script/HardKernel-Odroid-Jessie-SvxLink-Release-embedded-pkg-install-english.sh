@@ -129,7 +129,7 @@ apt-get install -y libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd gpsd-clients \
 		flite wvdial inetutils-syslogd screen vim usbutils logrotate cron gawk python3-serial \
 		git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
-		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban
+		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban 
 
 #cleanup
 apt-get clean
@@ -142,20 +142,13 @@ apt-get install -y --force-yes svxlink-server remotetrx
 ###########
 apt-get clean
 
-############################################
-#Backup Basic svxlink original config files
-############################################
-mkdir -p /usr/share/examples/svxlink/conf
-cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
-
 ##############################
 #Install Courtesy Sound Files
 ##############################
-wget --no-check-certificate http://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.1.tar.gz
-tar xzvf 15.10.1.tar.gz
-mv Svxlink-Courtesy_Tones-15.10.1 Courtesy_Tones
-mv Courtesy_Tones /usr/share/svxlink/sounds/
-rm 15.10.1.tar.gz
+wget --no-check-certificate http://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.2.tar.gz
+tar xzvf 15.10.2.tar.gz
+mv Svxlink-Courtesy_Tones-15.10.2/Courtesy_Tones /usr/share/svxlink/sounds
+rm -rf Svxlink-Courtesy_Tones-15.10.2 15.10.2.tar.gz
 
 ################################
 # Make and link Local event.d dir
@@ -169,6 +162,12 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
+
+############################################
+#Backup Basic svxlink original config files
+############################################
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
 ############################
 #Custom svxlink Shell Menu

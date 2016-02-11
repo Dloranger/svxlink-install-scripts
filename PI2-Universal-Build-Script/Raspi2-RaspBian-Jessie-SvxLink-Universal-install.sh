@@ -283,23 +283,16 @@ apt-get -y --force-yes install svxlink-server remotetrx
 #cleanup
 apt-get clean
 
-############################################
-#Backup Basic svxlink original config files
-############################################
-mkdir -p /usr/share/examples/svxlink/conf
-cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
-
 #adding user svxlink to gpio user group
 usermod -a -G gpio svxlink
 
 ##############################
 #Install Courtesy Sound Files
 ##############################
-wget --no-check-certificate https://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.1.tar.gz
-tar xzvf 15.10.1.tar.gz
-mv Svxlink-Courtesy_Tones-15.10.1 Courtesy_Tones
-mv Courtesy_Tones /usr/share/svxlink/sounds/
-rm 15.10.1.tar.gz
+wget --no-check-certificate http://github.com/kb3vgw/Svxlink-Courtesy_Tones/archive/15.10.2.tar.gz
+tar xzvf 15.10.2.tar.gz
+mv Svxlink-Courtesy_Tones-15.10.2/Courtesy_Tones /usr/share/svxlink/sounds
+rm -rf Svxlink-Courtesy_Tones-15.10.2 15.10.2.tar.gz
 
 #################################
 # Make and link Local event.d dir
@@ -313,6 +306,12 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
+
+############################################
+#Backup Basic svxlink original config files
+############################################
+mkdir -p /usr/share/examples/svxlink/conf
+cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
 ###########################################################
 #Disable onboard hdmi soundcard not used in openrepeater

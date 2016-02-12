@@ -273,7 +273,7 @@ apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 l
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
 		git-core wiringpi python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
-		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2
+		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 hostapd
 
 #################
 #Install svxlink

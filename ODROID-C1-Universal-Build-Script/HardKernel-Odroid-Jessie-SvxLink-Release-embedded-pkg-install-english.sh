@@ -125,11 +125,12 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 #######################
 #Install Dependancies
 #######################
-apt-get install -y libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 gpsd gpsd-clients \
-		flite wvdial inetutils-syslogd screen vim usbutils logrotate cron gawk python3-serial \
-		git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
-		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd
+apt-get install -y sqlite3 libopus0 alsa-base alsa-utils vorbis-tools sox libsox-fmt-mp3 
+        librtlsdr0 ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 bzip2 \
+        gpsd gpsd-clients flite wvdial inetutils-syslogd screen vim usbutils logrotate cron \
+        gawk python3-serial git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 \
+        libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban \
+        hostapd resolvconf
 
 #cleanup
 apt-get clean
@@ -194,12 +195,6 @@ DELIM
 ####################### 
 echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
-
-#######################
-#Enable Systemd Service
-####################### 
-echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
-systemctl enable remotetrx.service
 
 ##########
 #Set RTC 

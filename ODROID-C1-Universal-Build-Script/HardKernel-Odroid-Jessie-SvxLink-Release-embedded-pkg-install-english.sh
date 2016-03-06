@@ -130,7 +130,7 @@ apt-get install -y sqlite3 libopus0 alsa-base alsa-utils vorbis-tools sox libsox
         gpsd gpsd-clients flite wvdial inetutils-syslogd screen vim usbutils logrotate cron \
         gawk python3-serial git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 \
         libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban \
-        hostapd resolvconf
+        hostapd resolvconf libasound2-plugin-equal
 
 #cleanup
 apt-get clean
@@ -204,7 +204,7 @@ hwclock -w
 ############################################
 #reboot sysem for all changes to take effect
 ############################################
-#echo " rebooting system forfull changes to take effect "
-#reboot
+echo " rebooting system forfull changes to take effect "
+reboot
 
 ) | tee /root/install.log

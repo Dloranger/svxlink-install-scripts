@@ -274,7 +274,7 @@ apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 l
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
 		git-core wiringpi python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
 		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
-		libasound2-plugin-equal
+		libasound2-plugin-equal watchdog
 
 
 #################

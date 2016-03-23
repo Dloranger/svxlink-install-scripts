@@ -175,8 +175,10 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 #Board Test Scripts
 ############################
 git clone https://github.com/kb3vgw/board-scripts.git
-chmod +x board-scripts/*.py
-cp *.py /usr/bin
+mv boaboard-scripts/Logic.tcl /root
+chmod +x board-scripts/*
+cp * /usr/bin
+rm -rf board-scripts
 
 ############################
 #Custom svxlink Shell Menu

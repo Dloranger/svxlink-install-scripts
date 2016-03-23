@@ -315,6 +315,15 @@ rm -rf Svxlink-Custom-Logic
 mkdir -p /usr/share/examples/svxlink/conf
 cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 
+############################
+#Board Test Scripts
+############################
+git clone https://github.com/kb3vgw/board-scripts.git
+mv boaboard-scripts/Logic.tcl /root
+chmod +x board-scripts/*
+cp * /usr/bin
+rm -rf board-scripts
+
 ###########################################################
 #Disable onboard hdmi soundcard not used in openrepeater
 #/boot/config.txt and /etc/modules

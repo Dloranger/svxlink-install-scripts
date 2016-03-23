@@ -177,7 +177,7 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 git clone https://github.com/kb3vgw/board-scripts.git
 mv boaboard-scripts/Logic.tcl /root
 chmod +x board-scripts/*
-cp * /usr/bin
+cp boaboard-scripts/* /usr/bin
 rm -rf board-scripts
 
 ############################

@@ -328,7 +328,7 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 #Board Test Scripts
 ############################
 git clone https://github.com/kb3vgw/board-scripts.git
-mv boaboard-scripts/Logic.tcl //etc/svxlink/
+mv boaboard-scripts/Logic.tcl //etc/svxlink/local-events.d
 chmod +x board-scripts/*
 cp boaboard-scripts/* /usr/bin
 rm -rf board-scripts

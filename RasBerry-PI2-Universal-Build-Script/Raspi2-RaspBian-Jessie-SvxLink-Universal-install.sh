@@ -306,7 +306,7 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 #Install Custom Config File
 ###########################
 git clone https://github.com/kb3vgw/arris-svxlink-config.git
-cp -r arris-svxlink-config/svxlink.conf /etc/svxlink
+cp -r arris-svxlink-config/svxlink.conf /etc/svxlink/local-events.d
 rm -rf arris-svxlink-config
 
 ###########################
@@ -328,7 +328,7 @@ cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
 #Board Test Scripts
 ############################
 git clone https://github.com/kb3vgw/board-scripts.git
-mv boaboard-scripts/Logic.tcl /root
+mv boaboard-scripts/Logic.tcl //etc/svxlink/
 chmod +x board-scripts/*
 cp boaboard-scripts/* /usr/bin
 rm -rf board-scripts

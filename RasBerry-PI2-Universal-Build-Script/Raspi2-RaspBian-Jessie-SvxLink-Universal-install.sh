@@ -4,15 +4,6 @@
 # Auto Install Configuration options
 # (set it, forget it, run it)
 #######################################
-######################################################################
-# check to see that the configuration portion of the script was edited
-######################################################################
-if [[ $cs == "Set-This" ]]; then
-  echo
-  echo "Looks like you need to configure the scirpt before running"
-  echo "Please configure the script and try again"
-  exit 0
-fi
 
 ##################################################################
 # check to confirm running as root. # First, we need to be root...

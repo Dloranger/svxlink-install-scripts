@@ -4,16 +4,6 @@
 # Auto Install Options de configuration
 # (Défini, l'oublier, l'exécuter)
 #######################################
-################################################## ####################
-# Vérifier que la partie de configuration du script a été modifié
-################################################## ####################
-si [[== $ cs "Set-Ce"]]; puis
-  écho
-  echo "On dirait que vous avez besoin pour configurer le scirpt avant d'exécuter"
-  echo "S'il vous plaît configurer le script et essayez à nouveau"
-  exit 0
-fi
-
 ################################################## ################
 # Vérifier pour confirmer en tant que root. # Tout d'abord, nous avons besoin d'être root ...
 ################################################## ################

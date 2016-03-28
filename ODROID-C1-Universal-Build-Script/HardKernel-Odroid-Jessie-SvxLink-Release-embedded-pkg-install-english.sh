@@ -151,6 +151,13 @@ tar xzvf 15.10.2.tar.gz
 mv Svxlink-Courtesy_Tones-15.10.2/Courtesy_Tones /usr/share/svxlink/sounds
 rm -rf Svxlink-Courtesy_Tones-15.10.2 15.10.2.tar.gz
 
+###########################
+#Install Custom Config File
+###########################
+git clone https://github.com/kb3vgw/arris-svxlink-config.git
+cp -r arris-svxlink-config/svxlink.conf /etc/svxlink
+rm -rf arris-svxlink-config
+
 ################################
 # Make and link Local event.d dir
 #################################
@@ -169,7 +176,6 @@ rm -rf Svxlink-Custom-Logic
 ############################################
 mkdir -p /usr/share/examples/svxlink/conf
 cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
-
 
 ############################
 #Board Test Scripts

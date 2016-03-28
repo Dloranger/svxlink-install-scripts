@@ -55,7 +55,7 @@ fi
 ########
 # ARMEL
 ########
-cas $ (uname -m) dans ArMV [4-5] l)
+cas $ (uname -m) dans armv [4-5] l)
 écho
 echo "ARMEL est currenty UNSUPPORTED"
 écho
@@ -65,7 +65,7 @@ esac
 ########
 # ARMHF
 ########
-cas $ (uname -m) dans ArMV [6-9] l)
+cas $ (uname -m) dans armv [6-9] l)
 écho
 echo "armhf bras v7 planches v8 v9 supportées"
 écho
@@ -385,7 +385,7 @@ systemctl activer svxlink.service
 ############################################
 #reboot sysem pour toutes les modifications prennent effet
 ############################################
-echo "système redémarrant forfull modifications prennent effet"
+echo "système redémarrant for full modifications prennent effet"
 réinitialiser
 
 ) | tee /root/install.log

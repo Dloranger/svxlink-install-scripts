@@ -385,7 +385,7 @@ systemctl enable svxlink.service
 ############################################
 #reboot sysem for all changes to take effect
 ############################################
-echo " rebooting system forfull changes to take effect "
+echo " rebooting system for full changes to take effect "
 reboot
 
 ) | tee /root/install.log

@@ -303,11 +303,20 @@ mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
 ###########################
+#Install Custom Config File
+###########################
+git clone https://github.com/kb3vgw/arris-svxlink-config.git
+cp -r arris-svxlink-config/svxlink.conf /etc/svxlink
+rm -rf arris-svxlink-config
+
+###########################
 #Install Custom Logic Files
 ###########################
 git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
 cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
 rm -rf Svxlink-Custom-Logic
+
+https://github.com/kb3vgw/arris-svxlink-config.git
 
 ############################################
 #Backup Basic svxlink original config files

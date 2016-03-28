@@ -306,7 +306,7 @@ ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 #Install Custom Config File
 ###########################
 git clone https://github.com/kb3vgw/arris-svxlink-config.git
-cp -r arris-svxlink-config/svxlink.conf /etc/svxlink/local-events.d
+cp -r arris-svxlink-config/svxlink.conf /etc/svxlink/
 rm -rf arris-svxlink-config
 
 ###########################

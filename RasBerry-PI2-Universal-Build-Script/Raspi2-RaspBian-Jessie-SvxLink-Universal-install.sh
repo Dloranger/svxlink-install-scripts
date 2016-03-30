@@ -248,7 +248,7 @@ DELIM
 # SvxLink Release Repo ArmHF
 #############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://104.236.193.157/svxlink/release/debian/ jessie main
+deb http://104.131.9.52/svxlink/release/debian/ jessie main
 DELIM
 
 ######################

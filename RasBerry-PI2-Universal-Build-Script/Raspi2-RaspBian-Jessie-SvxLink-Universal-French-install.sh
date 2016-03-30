@@ -244,10 +244,10 @@ deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware rp
 DELIM
 
 #############################
-# SvxLink sortie Repo armhf
+# SvxLink Release Repo ArmHF
 #############################
-cat> "/etc/apt/sources.list.d/svxlink.list" << DELIM
-jessie la principale deb
+cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
+deb http://104.131.9.52/svxlink/release/debian/ jessie main
 DELIM
 
 ######################

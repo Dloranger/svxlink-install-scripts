@@ -264,7 +264,9 @@ sudo gpsd gpsd-clients Flite inetutils-syslogd wvdial écran temps vim uuid insta
 usbutils logrotate dialogue cron gawk watchdog python3-serial network-manager whiptail \
 git-core wiringpi python-pip libsigc ++ - 2.0-0c2a libhamlib2 libhamlib2 ++ c2 libhamlib2-perl \
 libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
-watchdog i2c-tools libasound2-plugin-égalité
+watchdog i2c-tools libasound2-plugin-égalité python-configobj python-cheetah python-imaging \
+python-serial python-usb
+
 
 
 #################

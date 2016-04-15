@@ -130,7 +130,10 @@ apt-get install -y sqlite3 libopus0 alsa-base alsa-utils vorbis-tools sox libsox
         gpsd gpsd-clients flite wvdial inetutils-syslogd screen vim usbutils logrotate cron \
         gawk python3-serial git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 \
         libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban \
-        hostapd resolvconf libasound2-plugin-equal watchdog i2c-tools
+        hostapd resolvconf libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah \
+        python-imaging python-serial python-usb
+        
+wget http://weewx.com/downloads/weewx_3.5.0-1_all.deb && dpkg -i weewx_3.5.0-1_all.deb && rm weewx_3.5.0-1_all.deb
 
 #cleanup
 apt-get clean

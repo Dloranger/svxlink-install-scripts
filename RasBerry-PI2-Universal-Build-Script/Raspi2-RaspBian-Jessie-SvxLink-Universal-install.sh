@@ -186,17 +186,6 @@ swapoff --all
 apt-get -y remove dphys-swapfile
 rm -rf /var/swap
 
-#####################################################
-#fix usb sound/nic issue so network interface gets IP
-#####################################################
-cat > /etc/network/interfaces << DELIM
-auto lo eth0
-iface lo inet loopback
-iface eth0 inet dhcp
-
-DELIM
-
-
 #####################################
 #Update base os with new repo in list
 #####################################
@@ -248,7 +237,14 @@ DELIM
 # SvxLink Release Repo ArmHF
 #############################
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://104.131.9.52/svxlink/release/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
+DELIM
+
+#############################
+# Wiringpi Release Repo ArmHF
+#############################
+cat > "/etc/apt/sources.list.d/wiringpi.list" <<DELIM
+deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM
 
 ######################

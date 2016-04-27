@@ -250,6 +250,13 @@ cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
 deb http://104.131.9.52/svxlink/release/debian/ jessie main
 DELIM
 
+#############################
+# Wiringpi Release Repo ArmHF
+#############################
+cat > "/etc/apt/sources.list.d/wiringpi.list" <<DELIM
+deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
+DELIM
+
 ######################
 os de base #update
 ######################

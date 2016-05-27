@@ -75,50 +75,7 @@ esac
 #####################################
 #Update base os with new repo in list
 #####################################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
-echo "--------------------------------------------------------------"
-echo ""
-gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
-gpg --export --armor 8B48AD6246925553 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
-gpg --export --armor  7638D0442B90D010 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
-gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
-wget https://www.raspberrypi.org/raspberrypi.gpg.key
-gpg --import raspberrypi.gpg.key | apt-key add -
-wget https://archive.raspbian.org/raspbian.public.key
-gpg --import raspbian.public.key | apt-key add -
-for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
-
-#####################################
-#Update base os with new repo in list
-#####################################
 apt-get update
-
-###################
-# Notes / Warnings
-###################
-echo
-cat << DELIM
-                   Not Ment For L.a.m.p Installs
-
-                  L.A.M.P = Linux Apache Mysql PHP
-
-                 THIS IS A ONE TIME INSTALL SCRIPT
-
-             IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
-
-         This Script Is Ment To Be Run On A Fresh Install Of
-
-                         Debian 8 (Jessie)
-
-     If It Fails For Any Reason Please Report To kb3vgw@gmail.com
-
-   Please Include Any Screen Output You Can To Show Where It Fails
-
-DELIM
 
 ###############################################################################################
 #Testing for internet connection. Pulled from and modified
@@ -141,6 +98,7 @@ echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
 
+
 #####################
 #ModProbe moules
 ####################
@@ -150,6 +108,10 @@ modprobe w1-therm
 ######################
 # Enable the spi & i2c
 ######################
+echo "snd-usb-audio" >> /etc/modules
+echo "#snd-bcm2835" >> /etc/modules
+echo "i2c-dev" >> /etc/modules
+echo "spi-bcm2708" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
 
@@ -160,15 +122,6 @@ cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-####################################
-# Set fs to run in a tempfs ramdrive
-####################################
-cat >> /etc/fstab << DELIM
-tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
-DELIM
-
 ############################
 # set usb power level
 ############################
@@ -176,7 +129,16 @@ cat >> /boot/config.txt << DELIM
 
 #usb max current
 usb_max_current=1
+
+#enable 1wire onboard temp
+dtoverlay=w1-gpio,gpiopin=4
+
 DELIM
+
+# Uncomment some or all of these to enable the optional hardware interfaces
+dtparam=i2c_arm=on
+dtparam=i2s=on
+dtparam=spi=on
 
 ###############################
 # Disable the dphys swap file
@@ -185,26 +147,6 @@ DELIM
 swapoff --all
 apt-get -y remove dphys-swapfile
 rm -rf /var/swap
-
-#####################################
-#Update base os with new repo in list
-#####################################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Updating Raspberry Pi repository keys..."
-echo "--------------------------------------------------------------"
-echo ""
-gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
-gpg --export --armor 8B48AD6246925553 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
-gpg --export --armor  7638D0442B90D010 | apt-key add -
-gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
-gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
-wget https://www.raspberrypi.org/raspberrypi.gpg.key
-gpg --import raspberrypi.gpg.key | apt-key add -
-wget https://archive.raspbian.org/raspbian.public.key
-gpg --import raspbian.public.key | apt-key add -
-for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 ################################################################################################
 # Setting apt_get to use the httpredirecter to get
@@ -255,18 +197,26 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 ##########################
 #Installing svxlink Deps
 ##########################
-apt-get install -y sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+apt-get install -y --force-yes  sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
 		git-core wiringpi python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
 		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
 		libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah python-imaging \
-		python-serial python-usb
+		python-serial python-usb python-dev python-pip
+		
+		pip install spidev
 
+#################
+#install weewex
+#################
 wget http://weewx.com/downloads/weewx_3.5.0-1_all.deb && dpkg -i weewx_3.5.0-1_all.deb && rm weewx_3.5.0-1_all.deb
 
+#####################
+# edit
 #/usr/bin/wee_device
+#####################
 sed -i /usr/bin/wee_device -e "s# print 'Using configuration file %s' % config_fn#\# print 'Using configuration file %s' % config_fn#"
 sed -i /usr/bin/wee_device -e "s#print 'Using %s driver version %s (%s)' % (#\#print 'Using %s driver version %s (%s)' % (#"
 sed -i /usr/bin/wee_device -e "s#driver_name, driver_vers, driver)#\#driver_name, driver_vers, driver)#"
@@ -292,40 +242,43 @@ rm -rf Svxlink-Courtesy_Tones-15.10.2 15.10.2.tar.gz
 
 #################################
 # Make and link Local event.d dir
+# based on how Tobias says to in 
+# manual/web site.
 #################################
 mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
 ###########################
+#Get Custom Files
+###########################
+git clone https://github.com/kb3vgw/SVXLink-Custom.git
+
+###########################
 #Install Custom Config File
 ###########################
-git clone https://github.com/kb3vgw/arris-svxlink-config.git
-cp -r arris-svxlink-config/svxlink.conf /etc/svxlink/
-rm -rf arris-svxlink-config
+cp -r SVXLink-Custom/svxlink-config/svxlink.conf /etc/svxlink/
 
 ###########################
 #Install Custom Logic Files
 ###########################
-git clone https://github.com/kb3vgw/Svxlink-Custom-Logic.git
-cp -rp Svxlink-Custom-Logic/* /etc/svxlink/local-events.d
-rm -rf Svxlink-Custom-Logic
+cp -rp SVXLink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
 
-https://github.com/kb3vgw/arris-svxlink-config.git
+############################
+#Board Test Scripts
+############################
+chmod +x SVXLink-Custom/board-scripts/*
+cp SVXLink-Custom/board-scripts/* /usr/bin
+
+######################
+#Remove SVXLink-Custom
+######################
+rm -rf SVXLink-Custom
 
 ############################################
 #Backup Basic svxlink original config files
 ############################################
 mkdir -p /usr/share/examples/svxlink/conf
 cp -rp /etc/svxlink/* /usr/share/examples/svxlink/conf
-
-############################
-#Board Test Scripts
-############################
-git clone https://github.com/kb3vgw/board-scripts.git
-mv boaboard-scripts/Logic.tcl //etc/svxlink/local-events.d
-chmod +x board-scripts/*
-cp boaboard-scripts/* /usr/bin
-rm -rf board-scripts
 
 ###########################################################
 #Disable onboard hdmi soundcard not used in openrepeater
@@ -370,11 +323,28 @@ fi
 
 DELIM
 
+#cat >> /~/.profile << DELIM
+
+#if [ -f /usr/bin/arris_config ]; then
+#        . /usr/bin/arris_config
+#fi
+
+#DELIM
+
 #######################
 #Enable Systemd Service
 ####################### 
 echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
+
+####################################
+# Set fs to run in a tempfs ramdrive
+####################################
+cat >> /etc/fstab << DELIM
+tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
+tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
+DELIM
 
 ############################################
 #reboot sysem for all changes to take effect
@@ -382,4 +352,4 @@ systemctl enable svxlink.service
 echo " rebooting system for full changes to take effect "
 reboot
 
-) | tee /root/install.log
+) | tee /~/install.log

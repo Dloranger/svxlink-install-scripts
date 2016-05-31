@@ -277,7 +277,7 @@ python-serial python-usb
 wget http://weewx.com/downloads/weewx_3.5.0-1_all.deb && dpkg -i weewx_3.5.0-1_all.deb && rm weewx_3.5.0-1_all.deb
 
 #/usr/bin/wee_device
-sed -i /usr/bin/wee_device -e "s# print 'Using configuration file %s' % config_fn#\# print 'Using configuration file %s' % config_fn#"
+sed -i /usr/bin/wee_device -e "s#print 'Using configuration file %s' % config_fn#\# print 'Using configuration file %s' % config_fn#"
 sed -i /usr/bin/wee_device -e "s#print 'Using %s driver version %s (%s)' % (#\#print 'Using %s driver version %s (%s)' % (#"
 sed -i /usr/bin/wee_device -e "s#driver_name, driver_vers, driver)#\#driver_name, driver_vers, driver)#"
 

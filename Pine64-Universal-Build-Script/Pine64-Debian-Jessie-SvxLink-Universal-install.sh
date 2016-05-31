@@ -108,9 +108,6 @@ modprobe w1-therm
 ######################
 # Enable the spi & i2c
 ######################
-echo "#snd-bcm2835" >> /etc/modules
-echo "i2c-dev" >> /etc/modules
-echo "spi-bcm2708" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
 echo "w1-therm" >> /etc/modules
 
@@ -120,32 +117,6 @@ echo "w1-therm" >> /etc/modules
 cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
-
-############################
-# set usb power level
-############################
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-
-#enable 1wire onboard temp
-dtoverlay=w1-gpio,gpiopin=4
-
-DELIM
-
-# Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=on
-dtparam=i2s=on
-dtparam=spi=on
-
-###############################
-# Disable the dphys swap file
-# Extend life of sd card
-###############################
-swapoff --all
-apt-get -y remove dphys-swapfile
-rm -rf /var/swap
 
 ################################################################################################
 # Setting apt_get to use the httpredirecter to get
@@ -166,12 +137,12 @@ deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-fr
 DELIM
 
 ############
-# Raspi Repo
+# Pine64 Repo
 ###########################################################################
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
-deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
+cat > /etc/apt/sources.list.d/pine64.list << DELIM
+
 DELIM
 
 #############################
@@ -196,7 +167,7 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 ##########################
 #Installing svxlink Deps
 ##########################
-apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+apt-get install -y --force-yes  sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
@@ -206,9 +177,6 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		python-serial python-usb python-dev python-pip
 		
 		pip install spidev
-
-#cleanup
-apt-get clean
 
 #################
 #install weewex
@@ -221,7 +189,7 @@ wget http://weewx.com/downloads/weewx_3.5.0-1_all.deb && dpkg -i weewx_3.5.0-1_a
 #####################
 sed -i /usr/bin/wee_device -e "s#print 'Using configuration file %s' % config_fn#\# print 'Using configuration file %s' % config_fn#"
 sed -i /usr/bin/wee_device -e "s#print 'Using %s driver version %s (%s)' % (#\#print 'Using %s driver version %s (%s)' % (#"
-sed -i /usr/bin/wee_device -e "s#driver_name, driver_vers, driver)#\#driver_name, driver_vers, driver)#"
+sed -i /usr/bin/wee_device -e "s#driver_name, driver_vers, driver)#\#driver_name, driver_vers, driver)#")#"
 
 #################
 #Install svxlink

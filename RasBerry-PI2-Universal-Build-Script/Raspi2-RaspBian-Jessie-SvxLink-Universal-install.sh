@@ -354,4 +354,4 @@ DELIM
 echo " rebooting system for full changes to take effect "
 reboot
 
-) | tee /~/install.log
+) | tee ~/install.log

@@ -308,10 +308,10 @@ fi
 ######################
 #Install svxlink Menu
 #####################
-git clone https://github.com/kb3vgw/arris-menu.git
-chmod +x arris-menu/arris_config
-cp -r arris-menu/arris_config /usr/bin
-rm -rf arris-menu
+git clone https://github.com/kb3vgw/SVXCard-Menu.git
+chmod +x SVXCard-Menu/SVXCard-Pi-Config
+cp -r  SVXCard-Menu/SVXCard-Pi-Config /usr/bin
+rm -rf SVXCard-Menu
 
 ##############################################
 # Enable New shellmenu for logins  on enabled 
@@ -319,19 +319,9 @@ rm -rf arris-menu
 ##############################################
 cat >> /root/.profile << DELIM
 
-if [ -f /usr/bin/arris_config ]; then
-        . /usr/bin/arris_config
+if [ -f /usr/bin/SVXCard-Pi-Config ]; then
+        . /usr/bin/SVXCard-Pi-Config
 fi
-
-DELIM
-
-#cat >> /~/.profile << DELIM
-
-#if [ -f /usr/bin/arris_config ]; then
-#        . /usr/bin/arris_config
-#fi
-
-#DELIM
 
 #######################
 #Enable Systemd Service

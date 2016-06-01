@@ -322,4 +322,308 @@ DELIM
 echo " rebooting system for full changes to take effect "
 reboot
 
+if [ install_irlp == "Y" ]; then
+#!/bin/bash
+
+# This script downloads all the IRLP install files and starts them from
+# /root for the user. This script is located in the initrd of the 
+# install CD.
+
+# Added Oct 3, 2012 - Adding support for Debian installs
+# Added Jan 2, 2013 - Added support for Raspberry Pi installs
+# Added Nov 4, 2015 - Added changes that ver4 kernel changed
+# Added Jan 17, 2016 - Added support for Debian Jessie (ver 8)
+# Added Jan 21, 2016 - Remkoved support for Pi installs on anything but Jessie
+
+# Make sure we are user root!!!
+if [ "`whoami`" != "root" ] ; then
+  echo "This program must be run as user ROOT!"
+  exit 1
+fi
+
+# Detects ARM devices, and sets a flag for later use
+if (cat /proc/cpuinfo | grep ARM >/dev/null) ; then
+  IRLP_ARM=YES
+fi
+
+# Debian Systems
+
+if [ -f /etc/debian_version ] ; then
+  OS=Debian
+else
+  OS=Unknown
+fi
+
+# Prepare debian systems for the installation process
+if [ "$OS" = "Debian" ] ; then
+
+# Jan 17, 2016
+# Detect the version of Debian, and do some custom work for different versions
+
+if (grep -q "8." /etc/debian_version) ; then
+  DEBIAN_VERSION=8
+elif (grep -q "7." /etc/debian_version) ; then
+  DEBIAN_VERSION=7
+elif (grep -q "6." /etc/debian_version) ; then
+  DEBIAN_VERSION=6
+else
+  DEBIAN_VERSION=UNSUPPORTED
+fi
+
+########### START DEBIAN ###########
+# This is a Debian setup/cleanup/install script for IRLP
+
+clear
+
+echo "This script is required in order to prepare your Debian $DEBIAN_VERSION"
+echo "system to run IRLP. It is very agressive, and can take up to an"
+echo "hour to complete. Please be patient."
+echo
+echo "WARNING - DO NOT RUN this script on an EXISTING install!"
+echo "The results are unpredictable, as it will autoremove some packages"
+echo "that may harm existing files/setups."
+echo
+echo "If you are proficient in Linux, you should view this script in detail"
+echo "before running it."
+echo
+echo -n "Press ENTER to continue, or CTRL-C to exit : " ; read ENTER
+
+if [ "$IRLP_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then 
+  echo
+  echo "**** ERROR ****"
+  echo "This script will only work on Debian Jessie Lite images at this time."
+  echo "No other version of Debian is supported at this time. If you require"
+  echo "assistance finding the right image, please refer to the IRLP wiki at"
+  echo "http://wiki.irlp.net or the directions for installing on a Pi system"
+  echo "at http://www.irlp.net/pi/"
+  echo "**** EXITING ****"
+  exit -1
+fi
+
+# Updates the apt database to the latest packages
+echo
+echo -n "Updating the apt-get software repository database ... "
+  apt-get -qq update >/dev/null 2>&1
+echo "[ DONE ]"
+
+# Ask user if they want to perform an update to the filesystem now. This will take some time
+# but it will make sure the user starts with the latest and greatest software.
+
+echo
+echo "**** DEBIAN LINUX SOFTWARE UPDATE ****"
+echo "Would you like to perform a software update to ensure this system is running"
+echo "the latest versions of the software packages installed? This process will take"
+echo "a few minutes, but is recommended as a lot can change between when the software"
+echo "image was written and when you perform this install."
+echo
+echo -n "Press ENTER to continue, or type n to skip : " ; read CHOOSE
+
+if [ "$CHOOSE" = "n" ] || [ "$CHOOSE" = "N" ] ; then
+  echo "Skipping software update"
+else
+  echo -n "Updating installed software packages (~5 mins) ... "
+  apt-get -y -qq upgrade
+  echo "[ DONE ]"
+fi
+
+# Clean up script for Raspberry Pi only!
+# Configs USB, flags in the environment file, etc.
+# Jan 21, 2016 - Made it only work on the Jessie images.
+# There is no easy way to make it work on both Jessie and Wheezy now
+
+if [ "$IRLP_ARM" = "YES" ] ; then
+
+  echo -n "Pi - Configuring the system to use USB sound and ALSA/OSS ... "
+    # Removes the snd_bcm2835 sound device (onboard) by adding the module to a blacklist
+    # file. This prevents the onboard sound from starting
+
+    echo "blacklist snd-bcm2835" > /etc/modprobe.d/alsa-blacklist.conf
+
+    # Change this to set the USB sound card as the first device and
+    # adds the nrpacks=1 options (studder sound)
+
+    echo "options snd-usb-audio index=0 nrpacks=1" > /etc/modprobe.d/aliases.conf
+
+  echo "[ DONE ]"
+
+  # Installs and configures a watchdog timer (experimental)
+  # FUTURE
+
+  echo -n "Pi - Removing the swap partition ... "
+    # Turns off the swap and removes the swap daemon and swap file
+    swapoff /var/swap >/dev/null 2>&1
+    update-rc.d dphys-swapfile disable >/dev/null 2>&1
+    apt-get -y -qq purge dphys-swapfile >/dev/null 2>&1
+    rm -f /var/swap
+  echo "[ DONE ]"
+
+fi
+
+## END Pi updates
+
+# Installs required packages:
+# Consider removing aumix (2015-11-04)
+echo -n "Installing packages needed for IRLP to run (~5 mins) ... "
+  apt-get -y -qq install ncftp rsync ntp openssh-server \
+                         lynx rdate sox wget alsa-oss curl alsa-utils \
+                         netcat sed gawk mlocate less busybox ftp bzip2 \
+                         telnet host dnsutils psmisc pppoeconf \
+                         alsa-base wicd-curses >/dev/null 2>&1
+echo "[ DONE ]"
+
+# removes exim, portmap, rpc, mpt-status
+echo -n "Removing extra packages not required for IRLP ... "
+  apt-get -y -qq autoremove mpt-status portmap exim4-base nfs-common \
+                            >/dev/null 2>&1
+echo "[ DONE ]"
+
+# 2016-02-02 - Temporary fix to ensure that the OSS sound modules are loaded. For some
+# reason, the modules are not loading at boot in Debian
+
+# Modifies the /etc/modules file to include the OSS PCM and mixer modules.
+# CHECK IF IT IS DONE ALREADY!
+
+if ! (grep -q snd-pcm-oss /etc/modules >/dev/null) ; then
+  echo "snd-pcm-oss" >> /etc/modules
+fi
+
+if ! (grep -q snd-mixer-oss /etc/modules >/dev/null) ; then
+  echo "snd-mixer-oss" >> /etc/modules
+fi
+
+modprobe -q snd-pcm-oss
+modprobe -q snd-mixer-oss
+
+# Creates a symlink to use busybox for usleep.
+ln -s /bin/busybox /usr/bin/usleep >/dev/null 2>&1
+
+# Creates a timeconfig script that points to the dpkg-reconfigure tzdata, rdate, and hwclock
+# Creates the dummy "yum" script to help with transition to apt-get
+# Copies the timeconfig script from the Debian utilities for IRLP
+ncftpget ftp.irlp.net /usr/bin \
+	/pub/debian/scripts/aumix \
+	/pub/debian/scripts/yum \
+	/pub/debian/scripts/timeconfig \
+	/pub/debian/scripts/sndconfig \
+	/pub/debian/scripts/netconfig \
+	/pub/debian/scripts/soundtest.wav
+
+chmod +x /usr/bin/aumix
+chmod +x /usr/bin/timeconfig
+chmod +x /usr/bin/sndconfig
+chmod +x /usr/bin/netconfig
+chmod +x /usr/bin/yum
+
+# Links alsaconf and sndconfig to the alsactl init script, and still plays the test audio file.
+ln -s /usr/bin/sndconfig /usr/bin/alsaconf >/dev/null 2>&1
+
+# Disables IPv6 by default (2015-11-04)
+echo net.ipv6.conf.all.disable_ipv6=1 > /etc/sysctl.d/disableipv6.conf
+
+# Changes alsactl so it can be run by users other than root without sudo
+# (2015-11-04)
+ln -s /usr/sbin/alsactl /usr/bin/alsactl
+chmod 4755 /usr/sbin/alsactl
+
+# Modifies the /etc/issue files to include info to ID this as an IRLP node
+# CHECK IF IT IS DONE ALREADY!
+if ! (grep Linking /etc/issue >/dev/null) ; then
+  echo "Internet Radio Linking Project Version" >> /etc/issue
+  echo "Internet Radio Linking Project Version" >> /etc/issue.net
+fi
+
+# Removes the attempt by aumix to reload mixer settings at boot (and the associated error)
+update-rc.d -f aumix remove
+
+# Allows the rc.local script to be run automatically at boot
+update-rc.d rc.local enable
+
+# Changes the first line of rc.local so it does not stop on errors
+# (2105-11-04)
+FILE=/etc/rc.local
+sed "s/sh -e/sh/" $FILE > ${FILE}.tmp
+mv -f ${FILE}.tmp ${FILE}
+
+# Updates the date/time, and starts ntp
+echo -n "Obtaining IP address of IRLP.net from DNS ... "
+HOST_IP=`host -t A irlp.net | cut -d" " -f4`
+
+if [ ${#HOST_IP} -lt 8 ] ; then
+  HOST_IP=208.67.255.162
+  echo "FAILED. Using $HOST_IP"
+else
+  echo "OK."
+  # This assumes the internet is here, and does an automated
+  # update of the system clock from ntp.ubc.ca, so that the time
+  # if going to be partially right
+  echo "Setting local clock ... "
+  /etc/init.d/ntp stop
+  rdate -s $HOST_IP
+  if [ "$IRLP_ARM" != "YES" ] ; then
+    hwclock --systohc
+  fi
+  /etc/init.d/ntp start
+  echo "done."
+fi
+
+# Added 2016-01-17 to allow remote root logins on Debian 8 systems (disabled by default)
+if [ "$DEBIAN_VERSION" = "8" ] ; then
+  FILE=/etc/ssh/sshd_config
+  sed "s/PermitRootLogin without-password/PermitRootLogin yes/" $FILE > ${FILE}.tmp
+  mv -f ${FILE}.tmp ${FILE}
+fi
+
+# Added 2016-01-17 if the wicd manager-settings.conf does not have wlan0, this adds it
+if ! (grep -q wlan0 /etc/wicd/manager-settings.conf) ; then
+  FILE=/etc/wicd/manager-settings.conf
+  sed "s/wireless_interface = None/wireless_interface = wlan0/" $FILE > ${FILE}.tmp
+  mv -f ${FILE}.tmp ${FILE}
+fi
+
+# Added 2016-01-17 Removes the annoying udev generator for network interfaces
+# This is for all Debian versions
+touch /etc/udev/rules.d/75-persistent-net-generator.rules
+rm -f  /etc/udev/rules.d/70-persistent-net.rules
+
+cd /root
+rm -fr irlp*install*
+
+ncftpget $HOST_IP ./ /pub/debian/irlp-install-debian /pub/debian/irlp-reinstall-debian
+
+if [ -f /root/irlp-install-debian ] && [ -f /root/irlp-reinstall-debian ] ; then
+  chmod 755 /root/irlp*install-debian
+  while [ -z $CHOICE ] ; do
+    echo
+    echo "Files downloaded successfully. Please choose which to perform:"
+    echo "--------------------------------------------------------------"
+    echo "1) New install"
+    echo "2) Re-install from backup"
+    echo
+    echo -n "Choice : " ; read CHOICE
+    if [ "$CHOICE" = "1" ] ; then
+      /root/irlp-install-debian
+      exit
+    fi
+    if [ "$CHOICE" = "2" ] ; then
+      /root/irlp-reinstall-debian
+      exit
+    fi
+    CHOICE=""
+  done
+else
+  echo
+  echo "There is a problem with downloading the install files. This can"
+  echo "be caused by a problem with your connection to the internet. Please"
+  echo "contact installs@irlp.net by email, and describe your problem."
+fi
+
+########### END DEBIAN ###########
+
+# Updates the mlocate database (common)
+echo -n "Updating the mlocate database ... "
+updatedb
+echo done.
+
+fi
+
 ) | tee /~/install.log

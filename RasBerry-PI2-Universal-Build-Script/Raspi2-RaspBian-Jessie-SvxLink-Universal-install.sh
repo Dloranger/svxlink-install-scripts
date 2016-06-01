@@ -157,8 +157,9 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
 		libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah python-imaging \
 		python-serial python-usb python-dev python-pip
-		
-		pip install spidev
+
+# install spidev
+pip install spidev
 
 #cleanup
 apt-get clean
@@ -236,7 +237,6 @@ sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 
 #Set up usb sound for alsa mixer
-
 if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
    echo "snd-usb-audio" >> /etc/modules
 fi

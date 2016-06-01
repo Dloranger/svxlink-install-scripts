@@ -123,8 +123,10 @@ rm -rf /var/swap
 cat > "/etc/apt/sources.list" << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie main contrib non-free
+
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
+
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 DELIM

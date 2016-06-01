@@ -128,11 +128,9 @@ deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
-
 DELIM
 
-# Raspi Repo
-# Put in Proper Location. All addon repos should be source.list.d sub dir
+# Raspi Repo Put in Proper Location. All addon repos should be source.list.d sub dir
 cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
@@ -192,13 +190,10 @@ rm -rf Svxlink-Courtesy_Tones-15.10.2 15.10.2.tar.gz
 mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
-###############
 # Clone Source
-###############
 git clone https://github.com/kb3vgw/SVXLink-Custom.git
 
 #install sa818/dra818 programmer
-
 chmod +x SVXLink-Custom/818-programming/src/*
 cp -rp SVXLink-Custom/818-programming/src/* /usr/bin
 

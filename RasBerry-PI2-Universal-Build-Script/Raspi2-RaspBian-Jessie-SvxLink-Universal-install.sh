@@ -219,7 +219,7 @@ DELIM
 cp -rp SVXLink-Custom/SVXCard-svxlink-config/svxlink.conf /etc/svxlink
 
 #install svxcard python menu
-cp -r SVXLink-Custom/SVXCard /etc/svxlink/local-events.d/
+#cp -r SVXLink-Custom/SVXCard /etc/svxlink/local-events.d/
 
 #install update script
 chmod +x SVXLink-Custom/update/update-svxcard.sh

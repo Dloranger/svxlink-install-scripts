@@ -92,6 +92,11 @@ cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
+#edit /boot/config.txt
+# Uncomment some or all of these to enable the optional hardware interfaces
+sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+sed -i /boot/config.txt -e"s#\#dtparam=i2s=on#dtparam=i2s=on#"
+sed -i /boot/config.txt -e"s#\#dtparam=spi=on#dtparam=spi=on#"
 
 # set usb power level
 cat >> /boot/config.txt << DELIM
@@ -101,13 +106,7 @@ usb_max_current=1
 
 #enable 1wire onboard temp
 dtoverlay=w1-gpio,gpiopin=4
-
 DELIM
-
-# Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=on
-dtparam=i2s=on
-dtparam=spi=on
 
 # Disable the dphys swap file # Extend life of sd card
 swapoff --all

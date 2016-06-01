@@ -57,8 +57,7 @@ esac
 #Update base os with new repo in list
 apt-get update
 
-#Testing for internet connection. Pulled from and modified
-#http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
+#Testing for internet connection
 echo
 echo "This Script Currently Requires a internet connection "
 echo

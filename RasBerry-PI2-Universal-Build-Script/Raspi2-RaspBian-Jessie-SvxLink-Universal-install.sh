@@ -230,7 +230,6 @@ rm -rf SVXLink-Custom
 
 #Disable onboard hdmi soundcard not used in openrepeater
 #/boot/config.txt and /etc/modules
-#/boot/config.txt
 sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
 #/etc/modules

@@ -110,8 +110,9 @@ DELIM
 
 # Disable the dphys swap file # Extend life of sd card
 swapoff --all
+update-rc.d dphys-swapfile disable
 apt-get -y remove dphys-swapfile
-apt-get purge dphys-swapfile
+apt-get -y -qq purge dphys-swapfile
 rm -rf /var/swap
 
 # Setting apt_get to use the httpredirecter to get

@@ -110,9 +110,9 @@ dtparam=i2s=on
 dtparam=spi=on
 
 # Disable the dphys swap file # Extend life of sd card
-
 swapoff --all
 apt-get -y remove dphys-swapfile
+apt-get purge dphys-swapfile
 rm -rf /var/swap
 
 # Setting apt_get to use the httpredirecter to get

@@ -143,8 +143,7 @@ DELIM
 
 # Wiringpi Release Repo ArmHF
 cat > "/etc/apt/sources.list.d/wiringpi.list" <<DELIM
-deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
-DELIM
+deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie mainDELIM
 
 #Update base os
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
@@ -157,21 +156,13 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		git-core wiringpi python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \
 		libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
 		libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah python-imaging \
-		python-serial python-usb python-dev python-pip
-
+		python-serial python-usb python-dev python-pip fswebcam
+		
 # install spidev
 pip install spidev
 
 #cleanup
 apt-get clean
-
-#install weewex
-wget http://weewx.com/downloads/weewx_3.5.0-1_all.deb && dpkg -i weewx_3.5.0-1_all.deb && rm weewx_3.5.0-1_all.deb
-
-# edit /usr/bin/wee_device
-sed -i /usr/bin/wee_device -e "s#print 'Using configuration file %s' % config_fn#\# print 'Using configuration file %s' % config_fn#"
-sed -i /usr/bin/wee_device -e "s#print 'Using %s driver version %s (%s)' % (#\#print 'Using %s driver version %s (%s)' % (#"
-sed -i /usr/bin/wee_device -e "s#driver_name, driver_vers, driver)#\#driver_name, driver_vers, driver)#"
 
 #Install svxlink
 apt-get -y --force-yes install svxlink-server remotetrx

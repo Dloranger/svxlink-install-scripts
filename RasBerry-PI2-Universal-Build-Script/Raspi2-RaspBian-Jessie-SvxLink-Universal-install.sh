@@ -12,47 +12,56 @@ echo
 echo "Looks Like you are root.... continuing!"
 echo
 
-#if lsb_release is not installed it installs it
-if [ ! -s /usr/bin/lsb_release ]; then
-	apt-get update && apt-get -y install lsb-release
+# Detects ARM devices, and sets a flag for later use
+if (cat /proc/cpuinfo | grep ARM >/dev/null) ; then
+  SVX_ARM=YES
 fi
 
-# Os/Distro Check
-lsb_release -c |grep -i jessie &> /dev/null 2>&1
-if [ $? -eq 0 ]; then
-	echo " OK you are running Debian 8 : Jessie "
+# Debian Systems
+
+if [ -f /etc/debian_version ] ; then
+  OS=Debian
 else
-	echo " This script was written for Debian 8 Jessie "
-	echo
-	echo " Your OS appears to be: " lsb_release -a
-	echo
-	echo " Your OS is not currently supported by this script ... "
-	echo
-	echo " Exiting the install. "
-	exit
+  OS=Unknown
 fi
 
-# Run a OS and Platform compatabilty Check
-# ARMEL
-case $(uname -m) in armv[4-5]l)
+# Prepare debian systems for the installation process
+if [ "$OS" = "Debian" ] ; then
+
+# Jan 17, 2016
+# Detect the version of Debian, and do some custom work for different versions
+
+if (grep -q "8." /etc/debian_version) ; then
+  DEBIAN_VERSION=8
+else
+  DEBIAN_VERSION=UNSUPPORTED
+fi
+
+# This is a Debian setup/cleanup/install script for IRLP
+
+clear
+
+echo "This script is required in order to prepare your Debian $DEBIAN_VERSION"
+echo "system to run SVXLink. It is very agressive, and can take up to an"
+echo "hour to complete. Please be patient."
 echo
-echo " ArmEL is currenty UnSupported "
+echo "WARNING - DO NOT RUN this script on an EXISTING install!"
+echo "The results are unpredictable, as it will autoremove some packages"
+echo "that may harm existing files/setups."
 echo
-exit
-esac
-# ARMHF
-case $(uname -m) in armv[6-9]l)
+echo "If you are proficient in Linux, you should view this script in detail"
+echo "before running it."
 echo
-echo " ArmHF arm v7 v8 v9 boards supported "
-echo
-esac
-# Intel/AMD
-case $(uname -m) in x86_64|i[4-6]86)
-echo
-echo " Intel / Amd boards currently UnSupported"
-echo
-exit
-esac
+echo -n "Press ENTER to continue, or CTRL-C to exit : " ; read ENTER
+
+if [ "$SVX_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then 
+  echo
+  echo "**** ERROR ****"
+  echo "This script will only work on Debian Jessie Lite images at this time."
+  echo "No other version of Debian is supported at this time. "
+  echo "**** EXITING ****"
+  exit -1
+fi
 
 #Update base os with new repo in list
 apt-get update

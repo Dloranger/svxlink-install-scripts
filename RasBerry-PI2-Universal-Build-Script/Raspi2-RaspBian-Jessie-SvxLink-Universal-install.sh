@@ -107,7 +107,14 @@ deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM
 
 #Update base os
+for i in update clean ;do apt-get -y "${i}" ; done
+
+#install/update debian keys/keyrings
+apt-get install -y debian-keyring debian-archive-keyring debian-ports-archive-keyring
+
+#Update base os
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
+
 
 #Installing svxlink Deps
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
@@ -168,6 +175,9 @@ if [ -f /usr/bin/SVXCard-Pi-Config ]; then
         . /usr/bin/SVXCard-Pi-Config
 fi
 DELIM
+
+#Copy Custom Logic into place
+cp -rp SVXLink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
 
 #svxcard svxlink config
 cp -rp SVXLink-Custom/SVXCard-svxlink-config/svxlink.conf /etc/svxlink

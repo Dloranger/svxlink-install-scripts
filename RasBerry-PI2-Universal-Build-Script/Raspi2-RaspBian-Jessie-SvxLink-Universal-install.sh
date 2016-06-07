@@ -44,6 +44,7 @@ if [ "$SVX_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then
   echo "**** EXITING ****"
   exit -1
 fi
+fi
 
 #Update base os with new repo in list
 apt-get update
@@ -65,37 +66,6 @@ fi
 echo
 printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
 echo
-
-#ModProbe moules
-modprobe w1-gpio
-modprobe w1-therm
-
-# Enable the spi & i2c
-echo "i2c-dev" >> /etc/modules
-echo "spi-bcm2708" >> /etc/modules
-echo "w1-gpio" >> /etc/modules
-echo "w1-therm" >> /etc/modules
-
-#Set a reboot if Kernel Panic
-cat > /etc/sysctl.conf << DELIM
-kernel.panic = 10
-DELIM
-
-#edit /boot/config.txt
-# Uncomment some or all of these to enable the optional hardware interfaces
-sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e"s#\#dtparam=i2s=on#dtparam=i2s=on#"
-sed -i /boot/config.txt -e"s#\#dtparam=spi=on#dtparam=spi=on#"
-
-# set usb power level
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-
-#enable 1wire onboard temp
-dtoverlay=w1-gpio,gpiopin=4
-DELIM
 
 # Disable the dphys swap file # Extend life of sd card
 swapoff --all
@@ -241,6 +211,38 @@ cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
+DELIM
+
+
+#ModProbe moules
+modprobe w1-gpio
+modprobe w1-therm
+
+# Enable the spi & i2c
+echo "i2c-dev" >> /etc/modules
+echo "spi-bcm2708" >> /etc/modules
+echo "w1-gpio" >> /etc/modules
+echo "w1-therm" >> /etc/modules
+
+#Set a reboot if Kernel Panic
+cat > /etc/sysctl.conf << DELIM
+kernel.panic = 10
+DELIM
+
+#edit /boot/config.txt
+# Uncomment some or all of these to enable the optional hardware interfaces
+sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+sed -i /boot/config.txt -e"s#\#dtparam=i2s=on#dtparam=i2s=on#"
+sed -i /boot/config.txt -e"s#\#dtparam=spi=on#dtparam=spi=on#"
+
+# set usb power level
+cat >> /boot/config.txt << DELIM
+
+#usb max current
+usb_max_current=1
+
+#enable 1wire onboard temp
+dtoverlay=w1-gpio,gpiopin=4
 DELIM
 
 #reboot sysem for all changes to take effect

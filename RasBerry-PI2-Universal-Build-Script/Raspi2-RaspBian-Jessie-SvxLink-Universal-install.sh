@@ -1,13 +1,11 @@
 #!/bin/bash
 (
-# Auto Install Configuration options
-# (set it, forget it, run it)
-
 # check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
   exit 0
 fi
+
 echo
 echo "Looks Like you are root.... continuing!"
 echo
@@ -18,7 +16,6 @@ if (cat /proc/cpuinfo | grep ARM >/dev/null) ; then
 fi
 
 # Debian Systems
-
 if [ -f /etc/debian_version ] ; then
   OS=Debian
 else
@@ -30,7 +27,6 @@ if [ "$OS" = "Debian" ] ; then
 
 # Jan 17, 2016
 # Detect the version of Debian, and do some custom work for different versions
-
 if (grep -q "8." /etc/debian_version) ; then
   DEBIAN_VERSION=8
 else
@@ -38,21 +34,7 @@ else
 fi
 
 # This is a Debian setup/cleanup/install script for IRLP
-
 clear
-
-echo "This script is required in order to prepare your Debian $DEBIAN_VERSION"
-echo "system to run SVXLink. It is very agressive, and can take up to an"
-echo "hour to complete. Please be patient."
-echo
-echo "WARNING - DO NOT RUN this script on an EXISTING install!"
-echo "The results are unpredictable, as it will autoremove some packages"
-echo "that may harm existing files/setups."
-echo
-echo "If you are proficient in Linux, you should view this script in detail"
-echo "before running it."
-echo
-echo -n "Press ENTER to continue, or CTRL-C to exit : " ; read ENTER
 
 if [ "$SVX_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then 
   echo
@@ -89,7 +71,6 @@ modprobe w1-gpio
 modprobe w1-therm
 
 # Enable the spi & i2c
-echo "#snd-bcm2835" >> /etc/modules
 echo "i2c-dev" >> /etc/modules
 echo "spi-bcm2708" >> /etc/modules
 echo "w1-gpio" >> /etc/modules
@@ -152,7 +133,8 @@ DELIM
 
 # Wiringpi Release Repo ArmHF
 cat > "/etc/apt/sources.list.d/wiringpi.list" <<DELIM
-deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie mainDELIM
+deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
+DELIM
 
 #Update base os
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
@@ -241,9 +223,11 @@ sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
 if ( ! `grep "snd-usb-audio" /etc/modules >/dev/null`) ; then
    echo "snd-usb-audio" >> /etc/modules
 fi
+
 FILE=/etc/modprobe.d/alsa-base.conf
 sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
 mv -f ${FILE}.tmp ${FILE}
+
 if ( ! `grep "options snd-usb-audio nrpacks=1" ${FILE} > /dev/null` ) ; then
   echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 fi

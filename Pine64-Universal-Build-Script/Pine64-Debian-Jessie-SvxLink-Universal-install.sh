@@ -81,31 +81,14 @@ modprobe w1-gpio
 modprobe w1-therm
 
 # Enable the spi & i2c
-echo "#snd-bcm2835" >> /etc/modules
 echo "i2c-dev" >> /etc/modules
-echo "spi-bcm2708" >> /etc/modules
-echo "w1-gpio" >> /etc/modules
-echo "w1-therm" >> /etc/modules
+echo "spi-" >> /etc/modules
+#echo "w1-gpio" >> /etc/modules
+#echo "w1-therm" >> /etc/modules
 
 #Set a reboot if Kernel Panic
 cat > /etc/sysctl.conf << DELIM
 kernel.panic = 10
-DELIM
-
-#edit /boot/config.txt
-# Uncomment some or all of these to enable the optional hardware interfaces
-sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
-sed -i /boot/config.txt -e"s#\#dtparam=i2s=on#dtparam=i2s=on#"
-sed -i /boot/config.txt -e"s#\#dtparam=spi=on#dtparam=spi=on#"
-
-# set usb power level
-cat >> /boot/config.txt << DELIM
-
-#usb max current
-usb_max_current=1
-
-#enable 1wire onboard temp
-dtoverlay=w1-gpio,gpiopin=4
 DELIM
 
 # Disable the dphys swap file # Extend life of sd card

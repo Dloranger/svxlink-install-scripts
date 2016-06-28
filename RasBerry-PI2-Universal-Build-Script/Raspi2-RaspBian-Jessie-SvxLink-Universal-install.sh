@@ -91,6 +91,10 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 DELIM
 
+#Update and install new key rings
+apt-get update
+apt-get install debian-archive-keyring debian-edu-archive-keyring debian-keyring debian-ports-archive-keyring
+
 # Raspi Repo Put in Proper Location. All addon repos should be source.list.d sub dir
 cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
@@ -114,7 +118,6 @@ apt-get install -y debian-keyring debian-archive-keyring debian-ports-archive-ke
 
 #Update base os
 for i in update upgrade clean ;do apt-get -y "${i}" ; done
-
 
 #Installing svxlink Deps
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \

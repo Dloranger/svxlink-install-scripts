@@ -100,6 +100,25 @@ cat > /etc/apt/sources.list.d/raspi.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 
+#####################################
+#Update base os with new repo in list
+#####################################
+echo ""
+echo "--------------------------------------------------------------"
+echo "Updating Raspberry Pi repository keys..."
+echo "--------------------------------------------------------------"
+echo ""
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --export --armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+
 # SvxLink Release Repo ArmHF
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main

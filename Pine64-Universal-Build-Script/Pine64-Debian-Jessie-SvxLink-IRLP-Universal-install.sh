@@ -92,11 +92,11 @@ kernel.panic = 10
 DELIM
 
 # Disable the dphys swap file # Extend life of sd card
-swapoff --all
-update-rc.d dphys-swapfile disable
-apt-get -y remove dphys-swapfile
-apt-get -y -qq purge dphys-swapfile
-rm -rf /var/swap
+#swapoff --all
+#update-rc.d dphys-swapfile disable
+#apt-get -y remove dphys-swapfile
+#apt-get -y -qq purge dphys-swapfile
+#rm -rf /var/swap
 
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -113,14 +113,9 @@ deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb-src http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 DELIM
 
-# RPine64 Repo Put in Proper Location. All addon repos should be source.list.d sub dir
-cat > /etc/apt/sources.list.d/raspi.list << DELIM
-
-DELIM
-
 # SvxLink Release Repo ArmHF
 cat > "/etc/apt/sources.list.d/svxlink.list" <<DELIM
-deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
+deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 
 # Wiringpi Release Repo ArmHF
@@ -133,7 +128,7 @@ for i in update upgrade clean ;do apt-get -y "${i}" ; done
 
 #Installing svxlink Deps
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
+		ntp libasound2 libopus0 libspeex1 libgcrypt20 libpopt0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
 		usbutils whiptail dialog logrotate cron gawk watchdog python3-serial network-manager \
 		git-core wiringpi python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl \

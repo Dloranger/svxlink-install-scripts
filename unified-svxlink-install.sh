@@ -46,24 +46,24 @@ options=("Raspberry Pi 2" "Odroid C1/C1+" "Pine64" "Raspberry Pi 3" "Odroid C2")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt in "${options[@]}" "Quit"; do
+select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # RASPBERRY PI2 32bit
-    1 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="rpi2";break;;
+    1 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="rpi2";break;;
 
     # ODROID C1/C1+ 32bit
-    2 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="oc1";break;;
+    2 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="oc1";break;;
 
     # PINE64 64bit
-    3 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="pine64";break;;
+    3 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="pine64";break;;
 
     # RASPBERRY PI3 64bit
-    4 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="rpi3";break;;
+    4 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="rpi3";break;;
 
     # ODROID-C2 64bit
-    5 ) echo "";echo "Building for $opt";device_long_name="$opt";device_short_name="oc2";break;;
-    
+    5 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="oc2";break;;
+
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -79,14 +79,14 @@ options=("English" "French")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt in "${options[@]}" "Quit"; do
+select opt2 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # English
-    1 ) echo "";echo "Installing for $opt" sound files;lang_long_name="$opt";lang_short_name="en";lang_en="yes";break;;
+    1 ) echo "";echo "Installing for $opt2" sound files;lang_long_name="$opt2";lang_short_name="en";lang_en="yes";break;;
 
     # French
-    2 ) echo "";echo "Installing for $opt" sound files;lang_long_name="$opt";lang_short_name="fr";lang_fr="yes";break;;
+    2 ) echo "";echo "Installing for $opt2" sound files;lang_long_name="$opt2";lang_short_name="fr";lang_fr="yes";break;;
 
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -103,39 +103,20 @@ options=("SVXLINK-Big" "SVXLINK-Basic")
 echo "$heading"
 echo "$title"
 PS3="$prompt "
-select opt in "${options[@]}" "Quit"; do
+select opt3 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # SVXLINK-Big
-    1 ) echo "";echo "Installing for $opt" board;board_long_name="$opt";board_short_name="svx1";board="SVXLINK-Big";break;;
+    1 ) echo "";echo "Installing for $opt3" board;board_long_name="$opt3";board_short_name="svx1";board="SVXLINK-Big";break;;
 
     # SVXLINK-Basic
-    2 ) echo "";echo "Installing for $opt" board;board_long_name="$opt";board_short_name="svx2";board="SVXLINK-Basic";break;;
-    
+    2 ) echo "";echo "Installing for $opt3" board;board_long_name="$opt3";board_short_name="svx2";board="SVXLINK-Basic";break;;
+
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
     esac
 done
-
-#####################################
-# Request user input to set hostname
-#####################################
-echo ""
-heading="HOSTNAME"
-title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($default_hostname) for this device OR enter your own and hit ENTER:"
-
-echo "$heading"
-echo "$title"
-read -r rptr_hostname
-
-if [[ $rptr_hostname == "" ]]; then
-	rptr_hostname="$default_hostname"
-fi
-
-echo ""
-echo "Using $rptr_hostname as hostname."
-echo ""
 
 # check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then
@@ -148,7 +129,7 @@ echo "Looks Like you are root.... continuing!"
 echo
 
 # Detects ARM devices, and sets a flag for later use
-if (cat /proc/cpuinfo | grep ARM >/dev/null) ; then
+if (gerp -q "ARM" /proc/cpuinfo) ; then
   SVX_ARM=YES
 fi
 
@@ -328,7 +309,7 @@ fi
 # Adding OpenRepeater Repo armhf
 ##########################
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1" ] ; then
-cat > /etc/apt/sources.list.d/openrepeater.list" << DELIM
+cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 fi
@@ -563,13 +544,13 @@ fi
 # Set up usb sound for alsa mixer
 #################################
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "pine64" ]; then
-	if ( ! $(grep "snd-usb-audio" /etc/modules > /dev/null) ) ; then
+	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi
 	FILE=/etc/modprobe.d/alsa-base.conf
 	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
 	mv -f ${FILE}.tmp ${FILE}
-	if ( ! $(grep "options snd-usb-audio nrpacks=1" ${FILE} >> /dev/null) ) ; then
+	if ( ! grep "options snd-usb-audio nrpacks=1" ${FILE} >> /dev/null ) ; then
 		echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
 	fi
 fi
@@ -652,7 +633,6 @@ DELIM
     OPTION=$(whiptail --inputbox "Enter Your CallSign" 8 60 --title "Set Your Call Sign" 3>&1 1>&2 2>&3)
     exitstatus=$?
 if [ $exitstatus = 0 ]; then
-        HOSTNAME_CURRENT=$(cat /etc/hostname)
         HOSTNAME_NEW=$OPTION
         cat > /etc/hosts << DELIM
         127.0.0.1       localhost
@@ -692,16 +672,9 @@ else
   whiptail --title "$WHIP_TITLE" --msgbox " CallSign change has been aborted. No changes have been applied" 8 60
 fi
 
-
-
-
 echo " ########################################################################################## "
 echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
 #) | tee /root/install.log
-#############################
-# Setting Host/Domain name
-#############################
-

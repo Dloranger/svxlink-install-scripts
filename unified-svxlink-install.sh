@@ -382,6 +382,7 @@ apt-get install -y --force-yes wiringpi
 fi
 
 pip install spidev
+pip install urwid
 
 ######################
 # Install svxlink

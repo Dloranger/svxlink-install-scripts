@@ -93,31 +93,7 @@ select opt2 in "${options[@]}" "Quit"; do
 
     esac
 done
-
 echo ""
-heading="What Repeater Board?"
-title="Please choose your repeater board:"
-prompt="Pick an option:"
-options=("SVXLINK-Big" "ARRIS-Basic")
-
-echo "$heading"
-echo "$title"
-PS3="$prompt "
-select opt3 in "${options[@]}" "Quit"; do
-    case "$REPLY" in
-
-    # SVXLINK-Big
-    1 ) echo "";echo "Installing for $opt3" board;board_long_name="$opt3";board_short_name="svx1";board="SVXLINK-Big";break;;
-
-    # SVXLINK-Basic
-    2 ) echo "";echo "Installing for $opt3" board;board_long_name="$opt3";board_short_name="ars1";board="ARRIS-Basic";break;;
-
-    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
-    *) echo "Invalid option. Try another one.";continue;;
-
-    esac
-done
-
 # check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"

@@ -386,20 +386,20 @@ if [ $lang_en == "yes" ] ; then
 ######################################################
 # Get SVXLink Sound Package (English)
 ######################################################
-wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-tar xjvf Svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
+wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
+tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 mv en_US-laura-16k /usr/share/Svxlink/sounds/en_US
-rm Svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
+rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
 fi
 
 if [ $lang_fr == "yes" ] ; then
 ######################################################
 # Get SVXLink Sound Package (French)
 ######################################################
-wget http://github.com/kb3vgw/Svxlink-sounds-fr_FR-justine/releases/download/15.11.2/Svxlink-sounds-fr_FR-justine-16k-15.11.2.tar.bz2
-tar xjvf Svxlink-sounds-fr_FR-justine-16k-15.11.2.tar.bz2
+wget http://github.com/kb3vgw/svxlink-sounds-fr_FR-justine/releases/download/15.11.1/svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
+tar xjvf svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
 mv fr_FR-justine-16k /usr/share/Svxlink/sounds/fr_FR
-rm Svxlink-sounds-fr_FR-justine-16k-15.11.2.tar.bz2
+rm svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
 fi
 
 #####################################################
@@ -436,98 +436,6 @@ cp -rp SVXLink-Custom/SVXCard-svxlink-config/svxlink.conf /etc/svxlink
 
 #Remove SVXLink-Custom
 rm -rf SVXLink-Custom
-
-##################################
-$ Set GPIO Pins
-##################################
-if [ $board == "SVXLINK-Big" ] ; then
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "pine64" ] ; then
-#configure pi gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"5 6 7 13 24 25 26 27\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"18 19\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"12 16 17 20 21 22 23\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio19/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio16/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio18/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio17/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/GPIO_RELAY_1=/' "s/GPIO_RELAY_1=.*/GPIO_RELAY_1=20/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_2=/' "s/GPIO_RELAY_2=.*/GPIO_RELAY_2=21/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_3=/' "s/GPIO_RELAY_3=.*/GPIO_RELAY_3=22/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_4=/' "s/GPIO_RELAY_4=.*/GPIO_RELAY_4=23/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-fi
-
-if [ $device_short_name == "oc1" ] ; then
-#configure odroid c1/c1+ gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/GPIO_RELAY_1=/' "s/GPIO_RELAY_1=.*/GPIO_RELAY_1=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_2=/' "s/GPIO_RELAY_2=.*/GPIO_RELAY_2=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_3=/' "s/GPIO_RELAY_3=.*/GPIO_RELAY_3=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_4=/' "s/GPIO_RELAY_4=.*/GPIO_RELAY_4=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-fi
-
-if [ $device_short_name == "oc2" ] ; then
-#configure Odroid C2 gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/GPIO_RELAY_1=/' "s/GPIO_RELAY_1=.*/GPIO_RELAY_1=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_2=/' "s/GPIO_RELAY_2=.*/GPIO_RELAY_2=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_3=/' "s/GPIO_RELAY_3=.*/GPIO_RELAY_3=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-printf '%s\n' '/GPIO_RELAY_4=/' "s/GPIO_RELAY_4=.*/GPIO_RELAY_4=/" w q | ex /etc/svxlink/svxlink.d/ModuleRemoteRelay.conf
-fi
-fi
-
-if [ $board == "ARRIS-Basic" ] ; then
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "pine64" ] ; then
-#configure pi gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"7 24\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"18 19\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"17 23\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio19/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio16/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio18/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio17/" w q | ex /etc/svxlink/Svxlink.conf      
-
-fi
-
-if [ $device_short_name == "oc1" ] ; then
-#configure odroid c1/c1+ gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"87 102\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"87 102\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"88 104\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio19/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio16/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio18/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio17/" w q | ex /etc/svxlink/Svxlink.conf
-fi
-
-if [ $device_short_name == "oc2" ] ; then
-#configure Odroid C2 gpio
-printf '%s\n' '/GPIO_IN_HIGH=/' "s/GPIO_IN_HIGH=.*/GPIO_IN_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_IN_LOW=/' "s/GPIO_IN_LOW=.*/GPIO_IN_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_HIGH=/' "s/GPIO_OUT_HIGH=.*/GPIO_OUT_HIGH=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/GPIO_OUT_LOW=/' "s/GPIO_OUT_LOW=.*/GPIO_OUT_LOW=\"\"/" w q | ex /etc/svxlink/Svxlink_gpio.conf
-printf '%s\n' '/\[Rx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[Tx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkRx1\]/' '/GPIO_SQL_PIN=gpio/' "s/GPIO_SQL_PIN=gpio.*/GPIO_SQL_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf
-printf '%s\n' '/\[LinkTx1\]/' '/PTT_PIN=gpio/' "s/PTT_PIN=gpio.*/PTT_PIN=gpio/" w q | ex /etc/svxlink/Svxlink.conf      
-fi
-fi
 
 #################################
 # Set up usb sound for alsa mixer

@@ -257,7 +257,7 @@ fi
 #############################
 # SvxLink Release Repo Arm64
 #############################
-if [ $device_short_name == "pine64" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc2" ] ; then
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
@@ -266,7 +266,7 @@ fi
 #############################
 # SvxLink Release Repo ArmHF
 #############################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -275,7 +275,7 @@ fi
 ##########################
 # Adding OpenRepeater Repo arm64
 ##########################
-if [ $device_short_name == "pine64" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc2" ] ; then
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
@@ -284,7 +284,7 @@ fi
 ##########################
 # Adding OpenRepeater Repo armhf
 ##########################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] ; then
 cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
@@ -293,7 +293,7 @@ fi
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [ $device_short_name == "rpi3" ] ; then
+if [[ $device_short_name == "rpi3" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
 DELIM
@@ -302,7 +302,7 @@ fi
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM
@@ -334,7 +334,7 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
 		python-pip fswebcam libxml-simple-perl libjs-jquery
 		
-if [ $device_short_name == "rpi2" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
 apt-get install -y --force-yes wiringpi
 fi
 
@@ -354,7 +354,7 @@ apt-get clean
 usermod -a -G gpio svxlink
 
 # RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
-if [ $device_short_name == "rpi" ] ; then
+if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
@@ -420,7 +420,7 @@ rm -rf SVXLink-Custom
 #################################
 # Set up usb sound for alsa mixer
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "pine64" ]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi
@@ -436,12 +436,12 @@ fi
 # RASPBERRY PI ,ODROID:
 # 1 wire Interface 
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
+if [ $device_short_name == "rpi2" ] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
 #ModProbe moules
 modprobe w1-gpio; modprobe w1-therm;
 
 # Enable the spi & i2c
-echo "i2c-dev" >> /etc/modules; echo "w1-gpio" >> /etc/modules; echo "w1-therm" >> /etc/modules;
+{ echo i2c-dev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
 fi
 
 #################################
@@ -449,7 +449,7 @@ fi
 # i2c &spi & set usb power
 # configure 1 wire gpio pin
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
 modprobe spi-bcm2708
 echo "spi-bcm2708" >> /etc/modules
 
@@ -473,7 +473,7 @@ fi
 # RASPBERRY PI ONLY:
 # Disable onboard HDMI sound card not used in openrepeater
 ###########################################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
 	#/boot/config.txt
 	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 

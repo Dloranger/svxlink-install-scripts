@@ -41,7 +41,7 @@ echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
 prompt="Pick a Arm Board:"
-options=("Raspberry Pi 2" "Odroid C1/C1+" "Pine64" "Raspberry Pi 3" "Odroid C2")
+options=("Raspberry_Pi_2" "Odroid_C1+" "Pine64" "Raspberry_Pi_3" "Odroid_C2")
 
 echo "$heading"
 echo "$title"
@@ -50,20 +50,20 @@ select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # RASPBERRY PI2 32bit
-    1 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="rpi2";break;;
+    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi2"; break;;
 
     # ODROID C1/C1+ 32bit
-    2 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="oc1";break;;
+    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc1+"; break;;
 
     # PINE64 64bit
-    3 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="pine64";break;;
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="pine64"; break;;
 
     # RASPBERRY PI3 64bit
-    4 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="rpi3";break;;
+    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi3"; break;;
 
     # ODROID-C2 64bit
-    5 ) echo "";echo "Building for $opt1";device_long_name="$opt1";device_short_name="oc2";break;;
-
+    5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
+    
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -83,10 +83,10 @@ select opt2 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # English
-    1 ) echo "";echo "Installing for $opt2" sound files;lang_long_name="$opt2";lang_short_name="en";lang_en="yes";break;;
+    1 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="en";lang_en="yes"; break;;
 
     # French
-    2 ) echo "";echo "Installing for $opt2" sound files;lang_long_name="$opt2";lang_short_name="fr";lang_fr="yes";break;;
+    2 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="fr"; lang_fr="yes"; break;;
 
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
@@ -266,7 +266,7 @@ fi
 #############################
 # SvxLink Release Repo ArmHF
 #############################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -284,7 +284,7 @@ fi
 ##########################
 # Adding OpenRepeater Repo armhf
 ##########################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
 cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
 deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
@@ -302,7 +302,7 @@ fi
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "oc1+" ] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM
@@ -332,9 +332,9 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl \
 		python-libhamlib2 fail2ban hostapd resolvconf libasound2-plugin-equal watchdog i2c-tools \
 		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
-		python-pip fswebcam 
-
-if [ $device_short_name == "rpi2" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] ; then
+		python-pip fswebcam libxml-simple-perl libjs-jquery
+		
+if [ $device_short_name == "rpi2" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
 apt-get install -y --force-yes wiringpi
 fi
 
@@ -410,13 +410,17 @@ cp -rp SVXLink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
 #svxcard svxlink config
 cp -rp SVXLink-Custom/SVXCard-svxlink-config/svxlink.conf /etc/svxlink
 
+#cp perl and web into place
+mkdir /var/www /var/spool/svxlink/state_info
+touch /var/log/eventsource
+
 #Remove SVXLink-Custom
 rm -rf SVXLink-Custom
 
 #################################
 # Set up usb sound for alsa mixer
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "pine64" ]; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] || [ $device_short_name == "pine64" ]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi
@@ -432,7 +436,7 @@ fi
 # RASPBERRY PI ,ODROID:
 # 1 wire Interface 
 #################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1" ] || [ $device_short_name == "oc2" ] ; then
+if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] || [ $device_short_name == "oc2" ] ; then
 #ModProbe moules
 modprobe w1-gpio; modprobe w1-therm;
 

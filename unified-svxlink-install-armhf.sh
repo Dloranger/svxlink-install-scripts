@@ -83,7 +83,7 @@ select opt2 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # English
-    1 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="en";lang_en="yes"; break;;
+    1 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="en"; lang_en="yes"; break;;
 
     # French
     2 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="fr"; lang_fr="yes"; break;;
@@ -473,15 +473,15 @@ fi
 # RASPBERRY PI ONLY:
 # Disable onboard HDMI sound card not used in openrepeater
 ###########################################################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
+#if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
 	#/boot/config.txt
-	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+#	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 
 	# Enable audio (loads snd_bcm2835)
 	# dtparam=audio=on
 	#/etc/modules
-	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-fi
+#	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
+#fi
 
 ########################
 # Enable Systemd Service

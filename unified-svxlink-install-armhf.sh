@@ -364,7 +364,7 @@ if [ $lang_en == "yes" ] ; then
 ######################################################
 wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-mv en_US-laura-16k /usr/share/Svxlink/sounds/en_US
+mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
 fi
 
@@ -374,7 +374,7 @@ if [ $lang_fr == "yes" ] ; then
 ######################################################
 wget http://github.com/kb3vgw/svxlink-sounds-fr_FR-justine/releases/download/15.11.1/svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
 tar xjvf svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
-mv fr_FR-justine-16k /usr/share/Svxlink/sounds/fr_FR
+mv fr_FR-justine-16k /usr/share/svxlink/sounds/fr_FR
 rm svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
 fi
 

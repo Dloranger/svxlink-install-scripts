@@ -366,6 +366,10 @@ wget http://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11
 tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
+mkdir -p /root/sounds_en/Custom_Courtesy_Tones
+ln -s /root/sounds_en/Custom_Courtesy_Tones /usr/share/Svxlink/sounds/Custom_Courtesy_Tones
+mkdir -p /root/sounds_en/Custom_Identification
+ln -s /root/sounds_en/Custom_identification /usr/share/Svxlink/sounds/en_US/Custom_Identification
 fi
 
 if [ $lang_fr == "yes" ] ; then
@@ -373,9 +377,13 @@ if [ $lang_fr == "yes" ] ; then
 # Get Svxlink Sound Package (French)
 ######################################################
 wget http://github.com/kb3vgw/svxlink-sounds-fr_FR-justine/releases/download/15.11.1/svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
-tar xjvf svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
+tar xjvf svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
 mv fr_FR-justine-16k /usr/share/svxlink/sounds/fr_FR
-rm svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
+rm svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
+mkdir -p /root/sounds_fr/Custom_Courtesy_Tones
+ln -s /root/sounds_fr/Custom_Courtesy_Tones /usr/share/Svxlink/sounds/Custom_Courtesy_Tones
+mkdir -p /root/sounds_fr/Custom_Identification
+ln -s /root/sounds_fr/Custom_identification /usr/share/Svxlink/sounds/fr_FR/Custom_Identification
 fi
 
 #####################################################
@@ -393,11 +401,11 @@ chmod +x Svxlink-Custom/818-programming/src/*
 cp -rp Svxlink-Custom/818-programming/src/* /usr/bin
 
 #Board Test Scripts
-chmod +x Svxlink-Custom/board-test-scripts/*
-cp -rp Svxlink-Custom/board-test-scripts/* /usr/bin
+chmod +x Svxlink-Custom/Svxcard-test-scripts/*
+cp -rp Svxlink-Custom/Svxcard-test-scripts/* /usr/bin
 
 #update executabe apps
-chmod +x SSvxlink-Custom/exec-apps/*
+chmod +x Svxlink-Custom/exec-apps/*
 cp Svxlink-Custom/exec-apps/* /usr/bin
 
 #Update SVXCard Menu
@@ -413,6 +421,12 @@ cp -rp Svxlink-Custom/Svxlink-config/svxlink.conf /etc/svxlink
 #cp perl and web into place
 mkdir /var/www /var/spool/svxlink/state_info
 touch /var/log/eventsource
+chmod +x Svxlink-Custom/Svxlink-perl/*.pl *.sh
+cp Svxlink-Custom/Svxlink-perl/*.pl /usr/bin
+cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
+chmod +x Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl
+cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
+cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
 
 #Remove Svxlink-Custom
 rm -rf Svxlink-Custom

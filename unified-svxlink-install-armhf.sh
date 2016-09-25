@@ -266,7 +266,7 @@ fi
 #############################
 # Svxlink Release Repo ArmHF
 #############################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -275,7 +275,7 @@ fi
 ##########################
 # Adding OpenRepeater Repo arm64
 ##########################
-if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc2" ]] ; then
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
 deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
 DELIM
@@ -293,16 +293,16 @@ fi
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [[ $device_short_name == "rpi3" ]] ; then
-cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
-deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
-DELIM
-fi
+#if [[ $device_short_name == "rpi3" ]] ; then
+#cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
+#deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
+#DELIM
+#fi
 
 #############################
 # WiringPi Release Repo Arm64
 #############################
-if [[ $device_short_name == "rpi2" ]] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
 cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM

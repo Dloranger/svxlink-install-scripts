@@ -2,7 +2,7 @@
 #(
 ####################################################################
 #
-#   Open Repeater Project
+#   Svxlink Repeater Project
 #
 #    Copyright (C) <2015-2016>  <Richard Neese> kb3vgw@gmail.com
 #
@@ -255,7 +255,7 @@ DELIM
 fi
 
 #############################
-# SvxLink Release Repo Arm64
+# Svxlink Release Repo Arm64
 #############################
 if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
@@ -264,7 +264,7 @@ DELIM
 fi
 
 #############################
-# SvxLink Release Repo ArmHF
+# Svxlink Release Repo ArmHF
 #############################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
@@ -294,7 +294,7 @@ fi
 # WiringPi Release Repo Arm64
 #############################
 if [[ $device_short_name == "rpi3" ]] ; then
-cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
 DELIM
 fi
@@ -303,7 +303,7 @@ fi
 # WiringPi Release Repo Arm64
 #############################
 if [[ $device_short_name == "rpi2" ]] ; then
-cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
 deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
 DELIM
 fi
@@ -342,27 +342,27 @@ pip install spidev
 pip install urwid
 
 ######################
-# Install svxlink
+# Install Svxlink
 #####################
 echo "--------------------------------------------------------------"
-echo " Installing svxlink + remotetrx"
+echo " Installing Svxlink + remotetrx"
 echo "--------------------------------------------------------------"
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
-#adding user svxlink to gpio user group
+#adding user Svxlink to gpio user group
 usermod -a -G gpio svxlink
 
-# RASPBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
+# RASPBERRY PI ONLY: Add Svxlink user to groups: gpio, audio, and daemon
 if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
 if [ $lang_en == "yes" ] ; then
 ######################################################
-# Get SVXLink Sound Package (English)
+# Get Svxlink Sound Package (English)
 ######################################################
-wget http://github.com/kb3vgw/Svxlink-sounds-en_US-laura/releases/download/15.11.2/svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
+wget http://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11.2/svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
@@ -370,7 +370,7 @@ fi
 
 if [ $lang_fr == "yes" ] ; then
 ######################################################
-# Get SVXLink Sound Package (French)
+# Get Svxlink Sound Package (French)
 ######################################################
 wget http://github.com/kb3vgw/svxlink-sounds-fr_FR-justine/releases/download/15.11.1/svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
 tar xjvf svxlink-sounds-fr_FR-justine-16k-15.11.1.tar.bz2
@@ -386,36 +386,36 @@ mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
 # Clone Source
-git clone https://github.com/kb3vgw/SVXLink-Custom.git
+git clone https://github.com/kb3vgw/Svxlink-Custom.git
 
 #install sa818/dra818 programmer
-chmod +x SVXLink-Custom/818-programming/src/*
-cp -rp SVXLink-Custom/818-programming/src/* /usr/bin
+chmod +x Svxlink-Custom/818-programming/src/*
+cp -rp Svxlink-Custom/818-programming/src/* /usr/bin
 
 #Board Test Scripts
-chmod +x SVXLink-Custom/board-test-scripts/*
-cp -rp SVXLink-Custom/board-test-scripts/* /usr/bin
+chmod +x Svxlink-Custom/board-test-scripts/*
+cp -rp Svxlink-Custom/board-test-scripts/* /usr/bin
 
 #update executabe apps
-chmod +x SVXLink-Custom/exec-apps/*
-cp SVXLink-Custom/exec-apps/* /usr/bin
+chmod +x SSvxlink-Custom/exec-apps/*
+cp Svxlink-Custom/exec-apps/* /usr/bin
 
 #Update SVXCard Menu
-chmod +x  SVXLink-Custom/SVXCard-Menu/SVXCard-Pi-Config
-cp -r SVXLink-Custom/SVXCard-Menu/SVXCard-Pi-Config /usr/bin
+chmod +x  Svxlink-Custom/Svxlink-Menu/Svxlink-Config
+cp -r Svxlink-Custom/Svxlink-Menu/Svxlink-Config /usr/bin
 
 #Copy Custom Logic into place
-cp -rp SVXLink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
+cp -rp Svxlink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
 
-#svxcard svxlink config
-cp -rp SVXLink-Custom/SVXCard-svxlink-config/svxlink.conf /etc/svxlink
+#svxcard Svxlink config
+cp -rp Svxlink-Custom/Svxlink-config/svxlink.conf /etc/svxlink
 
 #cp perl and web into place
 mkdir /var/www /var/spool/svxlink/state_info
 touch /var/log/eventsource
 
-#Remove SVXLink-Custom
-rm -rf SVXLink-Custom
+#Remove Svxlink-Custom
+rm -rf Svxlink-Custom
 
 #################################
 # Set up usb sound for alsa mixer
@@ -468,20 +468,6 @@ usb_max_current=1
 dtoverlay=w1-gpio,gpiopin=4
 DELIM
 fi
-
-###########################################################
-# RASPBERRY PI ONLY:
-# Disable onboard HDMI sound card not used in openrepeater
-###########################################################
-#if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
-	#/boot/config.txt
-#	sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-
-	# Enable audio (loads snd_bcm2835)
-	# dtparam=audio=on
-	#/etc/modules
-#	sed -i /etc/modules -e"s#snd-bcm2835#\#snd-bcm2835#"
-#fi
 
 ########################
 # Enable Systemd Service
@@ -537,11 +523,11 @@ declare -A config=()
       fi
     fi
     config[$section.$key]=$value
-  done < /etc/svxlink/Svxlink.conf
+  done < /etc/svxlink/svxlink.conf
 
   logics=${config[GLOBAL.LOGICS]}
 
-  printf '%s\n' "/\[$logics]/" '/CALLSIGN=/' "s/CALLSIGN=.*/CALLSIGN=$OPTION/" w q | ex /etc/svxlink/Svxlink.conf
+  printf '%s\n' "/\[$logics]/" '/CALLSIGN=/' "s/CALLSIGN=.*/CALLSIGN=$OPTION/" w q | ex /etc/Svxlink/Svxlink.conf
   WHIP_TITLE='CallSign Applied'
   whiptail --title "$WHIP_TITLE" --msgbox " Your new Repeater Callsign has successfully been applied." 8 60
 else
@@ -550,7 +536,7 @@ else
 fi
 
 echo " ########################################################################################## "
-echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
+echo " #             The Svxlink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "

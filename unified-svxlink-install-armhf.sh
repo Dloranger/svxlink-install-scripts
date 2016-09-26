@@ -1,5 +1,5 @@
 #!/bin/bash
-#(
+(
 ####################################################################
 #
 #   Svxlink Repeater Project
@@ -558,4 +558,4 @@ echo " #             The Svxlink Repeater / Echolink server Install is now compl
 echo " #                          and your system is ready for use..                            # "
 echo " #                                                                                        # "
 echo " ########################################################################################## "
-#) | tee /root/install.log
+) | tee /root/install.log

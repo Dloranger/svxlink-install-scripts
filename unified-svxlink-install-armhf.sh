@@ -508,51 +508,6 @@ tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-####################################
-# Call Sign/hostname
-####################################
-    OPTION=$(whiptail --inputbox "Enter Your CallSign" 8 60 --title "Set Your Call Sign" 3>&1 1>&2 2>&3)
-    exitstatus=$?
-if [ $exitstatus = 0 ]; then
-        HOSTNAME_NEW=$OPTION
-        cat > /etc/hosts << DELIM
-        127.0.0.1       localhost
-        ::1             localhost ip6-localhost ip6-loopback
-        fe00::0         ip6-localnet
-        ff00::0         ip6-mcastprefix
-        ff02::1         ip6-allnodes
-        ff02::2         ip6-allrouters
-
-        127.0.0.1       $HOSTNAME_NEW-Repeater
-DELIM
-
-cat > /etc/hostname << DELIM
-$HOSTNAME_NEW-Repeater
-DELIM
-
-declare -A config=()
-  while IFS='=' read -r key value; do
-    if [[ -z $value && $key = "["*"]" ]]; then
-      section=${key#\[} section=${section%]}
-      continue
-    else
-      if [[ -z $key || $key = \#* ]]; then
-        continue
-      fi
-    fi
-    config[$section.$key]=$value
-  done < /etc/svxlink/svxlink.conf
-
-  logics=${config[GLOBAL.LOGICS]}
-
-  printf '%s\n' "/\[$logics]/" '/CALLSIGN=/' "s/CALLSIGN=.*/CALLSIGN=$OPTION/" w q | ex /etc/Svxlink/Svxlink.conf
-  WHIP_TITLE='CallSign Applied'
-  whiptail --title "$WHIP_TITLE" --msgbox " Your new Repeater Callsign has successfully been applied." 8 60
-else
-  WHIP_TITLE='CallSign Aborted'
-  whiptail --title "$WHIP_TITLE" --msgbox " CallSign change has been aborted. No changes have been applied" 8 60
-fi
-
 echo " ########################################################################################## "
 echo " #             The Svxlink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "

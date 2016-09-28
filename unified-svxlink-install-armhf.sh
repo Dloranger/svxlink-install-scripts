@@ -233,7 +233,18 @@ DELIM
 # Put in Proper Location. All addon repos should be source.list.d sub dir
 ###########################################################################
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-cat >> /etc/apt/sources.list.d/raspian.list < DELIM
+gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
+gpg --export --armor 8B48AD6246925553 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
+gpg --expor--armor  7638D0442B90D010 | apt-key add -
+gpg --keyserver pgp.mit.edu --recv CBF8D6FD518E17E1
+gpg --export --t armor CBF8D6FD518E17E1 | apt-key add -
+wget https://www.raspberrypi.org/raspberrypi.gpg.key
+gpg --import raspberrypi.gpg.key | apt-key add -
+wget https://archive.raspbian.org/raspbian.public.key
+gpg --import raspbian.public.key | apt-key add -
+	
+cat >/etc/apt/sources.list.d/raspian.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
 DELIM
 fi

@@ -71,29 +71,6 @@ select opt1 in "${options[@]}" "Quit"; do
 done
 
 echo ""
-heading="What Language Sound Files?"
-title="Please choose you audio language:"
-prompt="Pick an option:"
-options=("English" "French")
-
-echo "$heading"
-echo "$title"
-PS3="$prompt "
-select opt2 in "${options[@]}" "Quit"; do
-    case "$REPLY" in
-
-    # English
-    1 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="en"; lang_en="yes"; break;;
-
-    # French
-    2 ) echo "";echo "Installing for $opt2" sound files; lang_long_name="$opt2"; lang_short_name="fr"; lang_fr="yes"; break;;
-
-    $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
-    *) echo "Invalid option. Try another one.";continue;;
-
-    esac
-done
-echo ""
 # check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
@@ -243,6 +220,7 @@ wget https://www.raspberrypi.org/raspberrypi.gpg.key
 gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
+rm *.key
 	
 cat >/etc/apt/sources.list.d/raspian.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
@@ -353,39 +331,7 @@ if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
-if [ $lang_en == "yes" ] ; then
-######################################################
-# Get Svxlink Sound Package (English)
-######################################################
-wget http://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11.2/svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
-mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
-rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
-https://github.com/kb3vgw/Svxlink-Courtesy_Tones.git Courtesy_Tones
-mv Courtesy_Tones /usr/share/svxlink/sounds
-mkdir -p /root/sounds_en/Custom_Courtesy_Tones
-ln -s /root/sounds_en/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
-mkdir -p /root/sounds_en/Custom_Identification
-ln -s /root/sounds_en/Custom_identification /usr/share/svxlink/sounds/en_US/Custom_Identification
-fi
-
-if [ $lang_fr == "yes" ] ; then
-######################################################
-# Get Svxlink Sound Package (French)
-######################################################
-wget http://github.com/kb3vgw/svxlink-sounds-fr_FR-justine/releases/download/15.11.1/svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
-tar xjvf svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
-mv fr_FR-justine-16k /usr/share/svxlink/sounds/fr_FR
-rm svxlink-sounds-fr_FR-justine-16k_15.11.1.tar.bz2
-git clone https://github.com/kb3vgw/Svxlink-Courtesy_Tones.git Courtesy_Tones
-mv Courtesy_Tones /usr/share/svxlink/sounds
-mkdir -p /root/sounds_fr/Custom_Courtesy_Tones
-ln -s /root/sounds_fr/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones
-mkdir -p /root/sounds_fr/Custom_Identification
-ln -s /root/sounds_fr/Custom_identification /usr/share/svxlink/sounds/fr_FR/Custom_Identification
-fi
-
-#####################################################
+####################################################
 # Make and link Local event.d dir based on how Tobias
 # says to in manual/web site.
 #####################################################
@@ -426,6 +372,7 @@ cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
 chmod +x Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl
 cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
+cp -r Svxlink-Custom/Svxlink-perl/eventsource/www2/* /var/www
 
 #Remove Svxlink-Custom
 rm -rf Svxlink-Custom
@@ -437,12 +384,7 @@ if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi
-	FILE=/etc/modprobe.d/alsa-base.conf
-	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
-	mv -f ${FILE}.tmp ${FILE}
-	if ( ! grep "options snd-usb-audio nrpacks=1" ${FILE} >> /dev/null ) ; then
-		echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
-	fi
+nan
 fi
 
 #################################
@@ -451,10 +393,10 @@ fi
 #################################
 if [ $device_short_name == "rpi2" ] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
 #ModProbe moules
-modprobe w1-gpio; modprobe w1-therm;
+modprobe w1-gpio; modprobe w1-therm; modprobe spidev;
 
 # Enable the spi & i2c
-{ echo i2c-dev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
+{ echo i2c-dev; echo w1-gpio; echo w1-therm; echo "spidev"; } >> /etc/modules;
 fi
 
 #################################
@@ -463,9 +405,6 @@ fi
 # configure 1 wire gpio pin
 #################################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
-modprobe spi-bcm2708
-echo "spi-bcm2708" >> /etc/modules
-
 #edit /boot/config.txt
 # Uncomment some or all of these to enable the optional hardware interfaces
 sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"

@@ -361,7 +361,7 @@ wget http://github.com/kb3vgw/svxlink-sounds-en_US-laura/releases/download/15.11
 tar xjvf svxlink-sounds-en_US-laura-16k-15.11.2.tar.bz2
 mv en_US-laura-16k /usr/share/svxlink/sounds/en_US
 rm svxlink-sounds-en_US-laura-16k-15.11.1.tar.bz2
-https://github.com/kb3vgw/Svxlink-Courtesy_Tones.git Courtesy_Tones
+git clone https://github.com/kb3vgw/Svxlink-Courtesy_Tones.git Courtesy_Tones
 mv Courtesy_Tones /usr/share/svxlink/sounds
 mkdir -p /root/sounds_en/Custom_Courtesy_Tones
 ln -s /root/sounds_en/Custom_Courtesy_Tones /usr/share/svxlink/sounds/Custom_Courtesy_Tones

@@ -36,7 +36,6 @@ echo "--------------------------------------------------------------"
 ############################################
 # Request user input to ask for device type
 ############################################
-
 echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
@@ -69,7 +68,6 @@ select opt1 in "${options[@]}" "Quit"; do
 
     esac
 done
-
 echo ""
 # check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then
@@ -77,9 +75,7 @@ if [ "$(id -u)" -ne "0" ]; then
   exit 0
 fi
 
-echo
 echo "Looks Like you are root.... continuing!"
-echo
 
 # Detects ARM devices, and sets a flag for later use
 if (gerp -q "ARM" /proc/cpuinfo) ; then
@@ -117,25 +113,6 @@ if [ "$SVX_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then
 fi
 fi
 
-###################
-# Notes / Warnings
-###################
-echo ""
-cat << DELIM
-                   Not Ment For L.A.M.P Installs
-
-                  L.A.M.P = Linux Apache Mysql PHP
-
-                 THIS IS A ONE TIME INSTALL SCRIPT
-
-             IT IS NOT INTENDED TO BE RUN MULTIPLE TIMES
-
-         This Script Is Meant To Be Run On A Fresh Install Of
-
-                         Debian 8 (Jessie)
-
-DELIM
-
 ################################################################################################
 # Testing for internet connection. Pulled from and modified
 # http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
@@ -165,18 +142,6 @@ cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-############################################
-# RASPBERRY PI ONLY:
-# Add-on extra scripts for cloning the drive
-############################################
-if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
-	cd /usr/local/bin || exit
-	wget https://raw.githubusercontent.com/billw2/rpi-clone/master/rpi-clone
-	chmod +x rpi-clone
-	cd /root || exit
-fi
-
-
 #############################################
 # Set Network Interface
 #############################################
@@ -197,12 +162,15 @@ fi
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "rpi2" ]] ; then
+
 cat > /etc/apt/sources.list << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-updates main contrib non-free
 deb http://httpredir.debian.org/debian/ jessie-backports main contrib non-free
 deb http://security.debian.org/ jessie/updates main contrib non-free
 DELIM
+fi
 
 ###########################################################################
 # RASPBERRY PI ONLY:
@@ -220,7 +188,6 @@ wget https://www.raspberrypi.org/raspberrypi.gpg.key
 gpg --import raspberrypi.gpg.key | apt-key add -
 wget https://archive.raspbian.org/raspbian.public.key
 gpg --import raspbian.public.key | apt-key add -
-rm *.key
 	
 cat >/etc/apt/sources.list.d/raspian.list << DELIM
 deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware non-free rpi
@@ -284,20 +251,12 @@ fi
 ######################
 # Update base OS
 ######################
-echo ""
-echo "--------------------------------------------------------------"
-echo "Performing Base OS Update..."
-echo "--------------------------------------------------------------"
-
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 
 ##########################
 # Installing Dependencies
 ##########################
-echo "--------------------------------------------------------------"
-echo " Installing Dependencies..."
-echo "--------------------------------------------------------------"
 apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
 		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
 		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
@@ -307,7 +266,7 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
 		python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
 		
-if [[ $device_short_name == "rpi2" ]] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [ $device_short_name == "oc1+" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
 apt-get install -y --force-yes wiringpi
 fi
 
@@ -317,9 +276,6 @@ pip install urwid
 ######################
 # Install Svxlink
 #####################
-echo "--------------------------------------------------------------"
-echo " Installing Svxlink + remotetrx"
-echo "--------------------------------------------------------------"
 apt-get -y --force-yes install svxlink-server remotetrx
 apt-get clean
 
@@ -331,7 +287,7 @@ if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
-####################################################
+#####################################################
 # Make and link Local event.d dir based on how Tobias
 # says to in manual/web site.
 #####################################################
@@ -369,8 +325,8 @@ touch /var/log/eventsource
 chmod +x Svxlink-Custom/Svxlink-perl/*.pl *.sh
 cp Svxlink-Custom/Svxlink-perl/*.pl /usr/bin
 cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
-chmod +x Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl
-cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
+chmod +x Svxlink-Cuslinktom/Svxlink-perl/eventsource/eventsource.pl
+cp Svxlink-Custom/Svx-perl/eventsource/eventsource.pl /usr/bin/
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www2/* /var/www
 
@@ -384,19 +340,22 @@ if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi
-nan
+	FILE=/etc/modprobe.d/alsa-base.conf
+	sed "s/options snd-usb-audio index=-2/options snd-usb-audio index=0/" $FILE > ${FILE}.tmp
+	mv -f ${FILE}.tmp ${FILE}
+	if ( ! grep "options snd-usb-audio nrpacks=1" ${FILE} >> /dev/null ) ; then
+		echo "options snd-usb-audio nrpacks=1 index=0" >> ${FILE}
+	fi
 fi
 
 #################################
-# RASPBERRY PI ,ODROID:
-# 1 wire Interface 
+# ODROIDc1+/c2:
 #################################
-if [ $device_short_name == "rpi2" ] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
+if [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
 #ModProbe moules
-modprobe w1-gpio; modprobe w1-therm; modprobe spidev;
-
-# Enable the spi & i2c
-{ echo i2c-dev; echo w1-gpio; echo w1-therm; echo "spidev"; } >> /etc/modules;
+modprobe spicc aml-i2c i2c-dev spidev w1-gpio; modprobe w1-therm;
+# Enable the modules at boot
+{ echo spicc; echo aml-i2c; echo i2c-dev; echo spidev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
 fi
 
 #################################
@@ -405,6 +364,12 @@ fi
 # configure 1 wire gpio pin
 #################################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
+#ModProbe moules
+modprobe spi-bcm2835 spi-bcm2835 i2c-dev spidev w1-gpio w1-therm
+
+# Enable the modules at boot
+{ echoi2c-bcm2708; echo spi-bcm2835; echo i2c-dev; spidev; echo w1-gpio; echo w1-therm;  } >> /etc/modules
+
 #edit /boot/config.txt
 # Uncomment some or all of these to enable the optional hardware interfaces
 sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
@@ -424,13 +389,11 @@ fi
 ########################
 # Enable Systemd Service
 ########################
-echo " Enabling the Svxlink systemd Service Daemon "
 systemctl enable svxlink.service
 
 ########################
 # Enable Systemd Service
 ########################
-echo " Enabling the Svxlink Remotetrx systemd Service Daemon "
 systemctl enable remotetrx.service
 
 ####################################
@@ -445,15 +408,17 @@ DELIM
 ##################################
 #Set up menu
 #################################
-cat > /root/.profile
-if [ -f /usr/bin/Svxlink-Config ]
+cat >> /root/.profile << DELIM
+if [ -f /usr/bin/Svxlink-Config ]; then 
 	/usr/bin/Svxlink-Config
 fi
+DELIM
 
-cat > /pi/.profile
-if [ -f /usr/bin/Svxlink-Config ]
+cat >> /pi/.profile << DELIM
+if [ -f /usr/bin/Svxlink-Config ]; then
 	sudo /usr/bin/Svxlink-Config
 fi
+DELIM
 
 #################################
 # Enable root account in ssh
@@ -471,6 +436,5 @@ sudo passwd root
 echo " ########################################################################################## "
 echo " #             The Svxlink Repeater / Echolink server Install is now complete             # "
 echo " #                          and your system is ready for use..                            # "
-echo " #                                                                                        # "
 echo " ########################################################################################## "
 ) | tee /root/install.log

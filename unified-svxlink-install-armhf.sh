@@ -329,7 +329,7 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
 		python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
 		
-if [[ $device_short_name == "rpi2" ]] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [ $device_short_name == "oc1+" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
 apt-get install -y --force-yes wiringpi
 fi
 
@@ -423,8 +423,8 @@ touch /var/log/eventsource
 chmod +x Svxlink-Custom/Svxlink-perl/*.pl *.sh
 cp Svxlink-Custom/Svxlink-perl/*.pl /usr/bin
 cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
-chmod +x Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl
-cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
+chmod +x Svxlink-Cuslinktom/Svxlink-perl/eventsource/eventsource.pl
+cp Svxlink-Custom/Svx-perl/eventsource/eventsource.pl /usr/bin/
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
 
 #Remove Svxlink-Custom
@@ -446,15 +446,13 @@ if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [
 fi
 
 #################################
-# RASPBERRY PI ,ODROID:
-# 1 wire Interface 
+# ODROIDc1+/c2:
 #################################
-if [ $device_short_name == "rpi2" ] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
+if [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
 #ModProbe moules
-modprobe w1-gpio; modprobe w1-therm;
-
-# Enable the spi & i2c
-{ echo i2c-dev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
+modprobe spicc aml-i2c i2c-dev spidev w1-gpio; modprobe w1-therm;
+# Enable the modules at boot
+{ echo spicc; echo aml-i2c; echo i2c-dev; echo spidev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
 fi
 
 #################################
@@ -463,8 +461,11 @@ fi
 # configure 1 wire gpio pin
 #################################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
-modprobe spi-bcm2708
-echo "spi-bcm2708" >> /etc/modules
+#ModProbe moules
+modprobe spi-bcm2835 spi-bcm2835 i2c-dev spidev w1-gpio w1-therm
+
+# Enable the modules at boot
+{ echoi2c-bcm2708; echo spi-bcm2835; echo i2c-dev; spidev; echo w1-gpio; echo w1-therm;  } >> /etc/modules
 
 #edit /boot/config.txt
 # Uncomment some or all of these to enable the optional hardware interfaces

@@ -352,6 +352,8 @@ fi
 # ODROIDc1+/c2:
 #################################
 if [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
+#blacklist driver
+echo blacklist ads7846 >> /etc/modeprobe.d/spicc-blacklist.conf
 #ModProbe moules
 modprobe spicc aml-i2c i2c-dev spidev w1-gpio; modprobe w1-therm;
 # Enable the modules at boot
@@ -366,7 +368,6 @@ fi
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
 #ModProbe moules
 modprobe spi-bcm2835 spi-bcm2835 i2c-dev spidev w1-gpio w1-therm
-
 # Enable the modules at boot
 { echoi2c-bcm2708; echo spi-bcm2835; echo i2c-dev; spidev; echo w1-gpio; echo w1-therm;  } >> /etc/modules
 

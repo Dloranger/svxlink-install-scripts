@@ -197,7 +197,7 @@ fi
 #############################
 # Svxlink Release Repo Arm64
 #############################
-if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc2" ]] ; then
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
@@ -230,24 +230,6 @@ deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
 DELIM
 fi
 
-#############################
-# WiringPi Release Repo Arm64
-#############################
-#if [[ $device_short_name == "rpi3" ]] ; then
-#cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
-#deb http://repo.openrepeater.com/wiringpi/devel/debian/ jessie main
-#DELIM
-#fi
-
-#############################
-# WiringPi Release Repo Arm64
-#############################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
-cat > /etc/apt/sources.list.d/Svxlink.list << DELIM
-deb http://repo.openrepeater.com/wiringpi/release/debian/ jessie main
-DELIM
-fi
-
 ######################
 # Update base OS
 ######################
@@ -266,7 +248,7 @@ apt-get install -y --force-yes sqlite3 libopus0 alsa-utils vorbis-tools sox libs
 		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
 		python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
 		
-if [[ $device_short_name == "rpi2" ]] || [ $device_short_name == "oc1+" ] ; then #|| [ $device_short_name == "rpi3" ] || [ $device_short_name == "oc1+" ] ; then
+if [[ $device_short_name == "rpi2" ]] || [ $device_short_name == "oc1+" ] ; then #|| [ $device_short_name == "rpi3" ]; then
 apt-get install -y --force-yes wiringpi
 fi
 

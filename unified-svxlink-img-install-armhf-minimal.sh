@@ -33,6 +33,13 @@ fi
 echo "--------------------------------------------------------------"
 echo "Looks Like you are root.... continuing!"
 echo "--------------------------------------------------------------"
+
+echo "reconfigure timezone"
+dpkg-reconfigure tzdata
+
+echo "reconfigure locale"
+dpkg-reconfigure locales
+
 ############################################
 # Request user input to ask for device type
 ############################################
@@ -66,6 +73,8 @@ select opt1 in "${options[@]}" "Quit"; do
     # Chip  32bit
     6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
         
+    # BBB  32bit
+    7 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="bbb"; break;;
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -209,7 +218,7 @@ fi
 #############################
 # Svxlink Release Repo ArmHF
 #############################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]]  || [[ $device_short_name == "rpi3" ]]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]]  || [[ $device_short_name == "bbb" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -310,7 +319,7 @@ rm -rf Svxlink-Custom
 #################################
 # Set up usb sound for alsa mixer
 #################################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "chip" ]]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi

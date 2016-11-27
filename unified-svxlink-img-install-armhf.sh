@@ -33,6 +33,13 @@ fi
 echo "--------------------------------------------------------------"
 echo "Looks Like you are root.... continuing!"
 echo "--------------------------------------------------------------"
+
+echo "reconfigure timezone"
+dpkg-reconfigure tzdata
+
+echo "reconfigure locale"
+dpkg-reconfigure locales
+
 ############################################
 # Request user input to ask for device type
 ############################################
@@ -40,7 +47,7 @@ echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
 prompt="Pick a Arm Board:"
-options=("Raspberry_Pi_2" "Odroid_C1+" "Pine64" "Raspberry_Pi_3" "Odroid_C2")
+options=("Raspberry_Pi_2" "Odroid_C1+" "Pine64" "Raspberry_Pi_3" "Odroid_C2" "CHIP" "BeagleBoneBlack")
 
 echo "$heading"
 echo "$title"
@@ -62,7 +69,12 @@ select opt1 in "${options[@]}" "Quit"; do
 
     # ODROID-C2 64bit
     5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
+
+    # Chip  32bit
+    6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
     
+    # BBB  32bit
+    7 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="bbb"; break;;  
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 
@@ -162,7 +174,7 @@ fi
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
 #################################################################################################
-if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "rpi2" ]] ; then
+if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
 
 cat > /etc/apt/sources.list << DELIM
 deb http://httpredir.debian.org/debian/ jessie main contrib non-free

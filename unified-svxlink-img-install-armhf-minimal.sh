@@ -319,7 +319,7 @@ rm -rf Svxlink-Custom
 #################################
 # Set up usb sound for alsa mixer
 #################################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "bbb" ]]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi

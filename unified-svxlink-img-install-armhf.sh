@@ -218,7 +218,7 @@ fi
 #############################
 # Svxlink Release Repo ArmHF
 #############################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] ; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
@@ -330,7 +330,7 @@ rm -rf Svxlink-Custom
 #################################
 # Set up usb sound for alsa mixer
 #################################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]]; then
+if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "bbb" ]]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
 	fi

@@ -303,9 +303,6 @@ cp -r Svxlink-Custom/Svxlink-Menu/Svxlink-Config /usr/bin
 #Copy Custom Logic into place
 cp -rp Svxlink-Custom/Custom-Logic/* /etc/svxlink/local-events.d
 
-#svxcard Svxlink config
-cp -rp Svxlink-Custom/Svxlink-config/svxlink.conf /etc/svxlink
-
 #cp perl and web into place
 mkdir /var/www /var/spool/svxlink/state_info
 touch /var/log/eventsource
@@ -313,7 +310,7 @@ chmod +x Svxlink-Custom/Svxlink-perl/*.pl *.sh
 cp Svxlink-Custom/Svxlink-perl/*.pl /usr/bin
 cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
 chmod +x Svxlink-Cuslinktom/Svxlink-perl/eventsource/eventsource.pl
-cp Svxlink-Custom/Svx-perl/eventsource/eventsource.pl /usr/bin/
+cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www2/* /var/www
 
@@ -399,12 +396,6 @@ DELIM
 cat >> /root/.profile << DELIM
 if [ -f /usr/bin/Svxlink-Config ]; then 
 	/usr/bin/Svxlink-Config
-fi
-DELIM
-
-cat >> /pi/.profile << DELIM
-if [ -f /usr/bin/Svxlink-Config ]; then
-	sudo /usr/bin/Svxlink-Config
 fi
 DELIM
 

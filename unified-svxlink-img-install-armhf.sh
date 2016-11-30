@@ -310,7 +310,7 @@ touch /var/log/eventsource
 chmod +x Svxlink-Custom/Svxlink-perl/*.pl *.sh
 cp Svxlink-Custom/Svxlink-perl/*.pl /usr/bin
 cp Svxlink-Custom/Svxlink-perl/net_loss_sim.sh /usr/bin
-chmod +x Svxlink-Cuslinktom/Svxlink-perl/eventsource/eventsource.pl
+chmod +x Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl
 cp Svxlink-Custom/Svxlink-perl/eventsource/eventsource.pl /usr/bin/
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www/* /var/www
 cp -r Svxlink-Custom/Svxlink-perl/eventsource/www2/* /var/www

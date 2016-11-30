@@ -51,7 +51,7 @@ echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
 prompt="Pick a Arm Board:"
-options=("Raspberry_Pi_2" "Odroid_C1+" "Pine64" "Raspberry_Pi_3" "Odroid_C2" "CHIP" "BeagleBoneBlack")
+options=("Raspberry_Pi_2" "CHIP" "BeagleBoneBlack" "Odroid_C1+" "Pine64" "Raspberry_Pi_3" "Odroid_C2")
 
 echo "$heading"
 echo "$title"
@@ -62,23 +62,24 @@ select opt1 in "${options[@]}" "Quit"; do
     # RASPBERRY PI2 32bit
     1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi2"; break;;
 
-    # ODROID C1/C1+ 32bit
-    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc1+"; break;;
-
-    # PINE64 64bit
-    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="pine64"; break;;
-
-    # RASPBERRY PI3 64bit
-    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi3"; break;;
-
-    # ODROID-C2 64bit
-    5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
-
-    # Chip  32bit
-    6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
+     # Chip  32bit
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
     
     # BBB  32bit
-    7 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="bbb"; break;;  
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="bbb"; break;;  
+    
+    # ODROID C1/C1+ 32bit
+    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc1+"; break;;
+
+    # PINE64 64bit
+    5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="pine64"; break;;
+
+    # RASPBERRY PI3 64bit
+    6) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi3"; break;;
+
+    # ODROID-C2 64bit
+    7 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
+
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
     *) echo "Invalid option. Try another one.";continue;;
 

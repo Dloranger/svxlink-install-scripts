@@ -23,6 +23,10 @@
 #
 ####################################################################
 
+#enable testing packages repo
+testing="y"
+
+
 ##################################################################
 # Check to confirm running as root. # First, we need to be root...
 ##################################################################
@@ -219,28 +223,17 @@ fi
 # Svxlink Release Repo ArmHF
 #############################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
+if [[ $testing=="y" ]] ; then
+cat > /etc/apt/sources.list.d/svxlink.list << DELIM
+deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
+DELIM
+else
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 fi
-
-##########################
-# Adding OpenRepeater Repo arm64
-##########################
-if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "oc2" ]] ; then
-cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
-deb http://repo.openrepeater.com/openrepeater/devel/debian/ jessie main
-DELIM
 fi
 
-##########################
-# Adding OpenRepeater Repo armhf
-##########################
-if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] ; then
-cat > /etc/apt/sources.list.d/openrepeater.list << DELIM
-deb http://repo.openrepeater.com/openrepeater/release/debian/ jessie main
-DELIM
-fi
 
 ######################
 # Update base OS

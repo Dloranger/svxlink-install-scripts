@@ -223,13 +223,12 @@ fi
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
 # Installing Dependencies
-apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 \
-	librtlsdr0 ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
-	sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils dialog \
-	logrotate cron gawk watchdog network-manager git-core libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 \
-	libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
-	libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah python-imaging python-serial \
-	python-usb python-dev python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
+apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
+	ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 sudo gpsd gpsd-clients \
+	flite wvdial inetutils-syslogd screen time uuid vim usbutils dialog logrotate cron gawk watchdog network-manager \
+	git-core libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl \
+	python-libhamlib2 fail2ban hostapd resolvconf libasound2-plugin-equal i2c-tools python-configobj python-cheetah \
+	python-imaging python-serial python-usb python-dev python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
 
 apt-get clean
 		

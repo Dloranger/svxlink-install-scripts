@@ -26,10 +26,7 @@
 #enable testing packages repo
 testing="y"
 
-
-##################################################################
 # Check to confirm running as root. # First, we need to be root...
-##################################################################
 if [ "$(id -u)" -ne "0" ]; then
   sudo -p "$(basename "$0") must be run as root, please enter your sudo password : " "$0" "$@"
   exit 0
@@ -44,9 +41,7 @@ dpkg-reconfigure tzdata
 echo "reconfigure locale"
 dpkg-reconfigure locales
 
-############################################
 # Request user input to ask for device type
-############################################
 echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
@@ -130,10 +125,8 @@ if [ "$SVX_ARM" = "YES" ] && [ "$DEBIAN_VERSION" != "8" ] ; then
 fi
 fi
 
-################################################################################################
 # Testing for internet connection. Pulled from and modified
 # http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
-################################################################################################
 echo "--------------------------------------------------------------"
 echo "This Script Currently Requires a internet connection "
 echo "--------------------------------------------------------------"
@@ -152,16 +145,13 @@ printf ' Current ip is : '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\
 echo "--------------------------------------------------------------"
 echo
 
-##############################
 # Set a reboot if Kernel Panic
-##############################
 cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-#############################################
+
 # Set Network Interface
-#############################################
 if [ $device_short_name == "rpi1" ] || [ $device_short_name == "rpi2" ] || [ $device_short_name == "pine64" ] ; then
 cat > /etc/network/interfaces << DELIM
 auto lo eth0
@@ -170,7 +160,6 @@ iface eth0 inet dhcp
 DELIM
 fi
 
-#################################################################################################
 # all boards
 # Setting apt_get to use the httpredirecter to get
 # To have <APT> automatically select a mirror close to you, use the Geo-ip redirector in your
@@ -178,7 +167,6 @@ fi
 # See http://httpredir.debian.org/ for more information.  The redirector uses HTTP 302 redirects
 # not dnS to serve content so is safe to use with Google dnS.
 # See also <which httpredir.debian.org>.  This service is identical to http.debian.net.
-#################################################################################################
 if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
 
 cat > /etc/apt/sources.list << DELIM
@@ -189,11 +177,9 @@ deb http://security.debian.org/ jessie/updates main contrib non-free
 DELIM
 fi
 
-###########################################################################
 # RASPBERRY PI ONLY:
 # Raspi Repo
 # Put in Proper Location. All addon repos should be source.list.d sub dir
-###########################################################################
 if [ $device_short_name == "rpi2" ] || [ $device_short_name == "rpi3" ] ; then
 gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553 
 gpg --export --armor 8B48AD6246925553 | apt-key add -
@@ -211,18 +197,14 @@ deb http://mirrordirector.raspbian.org/raspbian/ jessie main contrib firmware no
 DELIM
 fi
 
-#############################
 # Svxlink Release Repo Arm64
-#############################
 if [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "oc2" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
 DELIM
 fi
 
-#############################
 # Svxlink Release Repo ArmHF
-#############################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
 if [[ $testing=="y" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
@@ -236,35 +218,36 @@ fi
 fi
 
 
-######################
 # Update base OS
-######################
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
 
-
-##########################
 # Installing Dependencies
-##########################
-apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 librtlsdr0 \
-		ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
-		sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info \
-		usbutils dialog logrotate cron gawk watchdog network-manager git-core libsigc++-2.0-0c2a \
-		libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl \
-		python-libhamlib2 fail2ban hostapd resolvconf libasound2-plugin-equal watchdog i2c-tools \
-		python-configobj python-cheetah python-imaging python-serial python-usb python-dev \
-		python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
+apt-get install -y --force-yes --fix-missing sqlite3 libopus0 alsa-utils vorbis-tools sox libsox-fmt-mp3 \
+	librtlsdr0 ntp libasound2 libspeex1 libgcrypt20 libpopt0 libopus0 libgsm1 tcl8.6 tk8.6 alsa-base bzip2 \
+	sudo gpsd gpsd-clients flite wvdial inetutils-syslogd screen time uuid vim install-info usbutils dialog \
+	logrotate cron gawk watchdog network-manager git-core libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 \
+	libhamlib2-perl libhamlib-utils libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban hostapd resolvconf \
+	libasound2-plugin-equal watchdog i2c-tools python-configobj python-cheetah python-imaging python-serial \
+	python-usb python-dev python-pip fswebcam libxml-simple-perl libjs-jquery ssmtp
+
+apt-get clean
 		
 if [[ $device_short_name == "rpi2" ]] || [ $device_short_name == "oc1+" ] ; then #|| [ $device_short_name == "rpi3" ]; then
 apt-get install -y --force-yes wiringpi
 fi
 
+#spidev
 pip install spidev
+#usrwid
 pip install urwid
 
-######################
 # Install Svxlink
-#####################
 apt-get -y --force-yes install svxlink-server remotetrx
+
+if [[ $testing=="y" ]] ; then
+apt-get install svxserver
+fi
+
 apt-get clean
 
 #adding user Svxlink to gpio user group
@@ -275,10 +258,9 @@ if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
 
-#####################################################
+
 # Make and link Local event.d dir based on how Tobias
 # says to in manual/web site.
-#####################################################
 mkdir /etc/svxlink/local-events.d
 ln -s /etc/svxlink/local-events.d /usr/share/svxlink/events.d/local
 
@@ -318,9 +300,7 @@ cp -r Svxlink-Custom/Svxlink-perl/eventsource/www2/* /var/www
 #Remove Svxlink-Custom
 rm -rf Svxlink-Custom
 
-#################################
 # Set up usb sound for alsa mixer
-#################################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "pine64" ]] || [[ $device_short_name == "bbb" ]]; then
 	if ( ! grep "snd-usb-audio" /etc/modules > /dev/null ) ; then
 		echo "snd-usb-audio" >> /etc/modules
@@ -333,9 +313,7 @@ if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [
 	fi
 fi
 
-#################################
 # ODROIDc1+/c2:
-#################################
 if [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] ; then
 #blacklist driver
 echo blacklist ads7846 >> /etc/modeprobe.d/spicc-blacklist.conf
@@ -345,11 +323,9 @@ modprobe spicc aml-i2c i2c-dev spidev w1-gpio; modprobe w1-therm;
 { echo spicc; echo aml-i2c; echo i2c-dev; echo spidev; echo w1-gpio; echo w1-therm; } >> /etc/modules;
 fi
 
-#################################
 # RASPBERRY PI 2/3
 # i2c &spi & set usb power
 # configure 1 wire gpio pin
-#################################
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
 #ModProbe moules
 modprobe spi-bcm2835 spi-bcm2835 i2c-dev spidev w1-gpio w1-therm
@@ -372,45 +348,33 @@ dtoverlay=w1-gpio,gpiopin=4
 DELIM
 fi
 
-########################
 # Enable Systemd Service
-########################
 systemctl enable svxlink.service
 
-########################
 # Enable Systemd Service
-########################
 systemctl enable remotetrx.service
 
-####################################
 # Set fs to run in a tempfs ramdrive
-####################################
 cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
-##################################
 #Set up menu
-#################################
 cat >> /root/.profile << DELIM
 if [ -f /usr/bin/Svxlink-Config ]; then 
 	/usr/bin/Svxlink-Config
 fi
 DELIM
 
-#################################
 # Enable root account in ssh
-#################################
 printf '%s\n' '/PermitRootLogin/' "s/PermitRootLogin\ .*/PermitRootLogin\ yes/" w q  | ex /etc/ssh/sshd_config
 
 #restart ssh
 service ssh restart
 
-##################################
 # Set Root Password
-#################################
 sudo passwd root
 
 echo " ########################################################################################## "

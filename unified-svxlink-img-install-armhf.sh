@@ -207,7 +207,7 @@ fi
 
 # Svxlink Release Repo ArmHF
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
-if [[ $testing=="y" ]] ; then
+if [[ $testing == "y" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
@@ -346,6 +346,11 @@ usb_max_current=1
 #enable 1wire onboard temp
 dtoverlay=w1-gpio,gpiopin=4
 DELIM
+fi
+
+if [[ $testing == "y" ]] ; then
+# Enable Systemd Service
+systemctl enable svxserver.service
 fi
 
 # Enable Systemd Service

@@ -207,7 +207,7 @@ fi
 
 # Svxlink Release Repo ArmHF
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "chip" ]] || [[ $device_short_name == "bbb" ]]; then
-if [[ $testing=="y" ]] ; then
+if [[ $testing == "y" ]] ; then
 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
@@ -217,7 +217,6 @@ deb http://repo.openrepeater.com/svxlink/release/debian/ jessie main
 DELIM
 fi
 fi
-
 
 # Update base OS
 for i in update upgrade clean ;do apt-get -y --force-yes "${i}" ; done
@@ -256,7 +255,6 @@ usermod -a -G gpio svxlink
 if [[ $device_short_name == "rpi" ]] ; then
 	usermod -a -G daemon,gpio,audio svxlink
 fi
-
 
 # Make and link Local event.d dir based on how Tobias
 # says to in manual/web site.
@@ -345,6 +343,11 @@ usb_max_current=1
 #enable 1wire onboard temp
 dtoverlay=w1-gpio,gpiopin=4
 DELIM
+fi
+
+if [[ $testing == "y" ]] ; then
+# Enable Systemd Service
+systemctl enable svxserver.service
 fi
 
 # Enable Systemd Service

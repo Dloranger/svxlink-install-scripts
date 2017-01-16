@@ -25,7 +25,7 @@
 
 #enable testing packages repo
 #Test 16.01 Pkgs
-testing="n"
+testing="y"
 
 # Check to confirm running as root. # First, we need to be root...
 if [ "$(id -u)" -ne "0" ]; then

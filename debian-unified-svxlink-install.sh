@@ -390,7 +390,7 @@ DELIM
                 echo " Adding SvxLink Stable Repository                             "
                 echo "--------------------------------------------------------------"
                 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/stable/debian/ jessie main
+deb http://104.131.9.52/svxlink/stable/debian/ jessie main
 DELIM
         fi
 
@@ -400,7 +400,7 @@ DELIM
                 echo " Adding SvxLink Testing Repository                            "
                 echo "--------------------------------------------------------------"
                 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
+deb http://104.131.9.52/svxlink/testing/debian/ jessie main
 DELIM
 fi
 
@@ -410,16 +410,7 @@ fi
                 echo " Adding SvxLink Devel Repository                              "
                 echo "--------------------------------------------------------------"
                 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
-deb http://repo.openrepeater.com/svxlink/devel/debian/ jessie main
-DELIM
-        fi
-
-        if [[ $orp_short_name == "orp-stable" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Adding OpenRepeater Stable repository                        "
-                echo "--------------------------------------------------------------"
-                cat > "/etc/apt/sources.list.d/openrepeater.list" << DELIM
-deb http://repo.openrepeater.com/openrepeater/stable/debian/ jessie main
+deb http://104.131.9.52/svxlink/devel/debian/ jessie main
 DELIM
         fi
 
@@ -442,7 +433,7 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
                 network-manager git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils \
                 libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban resolvconf libasound2-plugin-equal watchdog i2c-tools \
                 python-configobj python-cheetah python-imaging python-usb python-dev python-pip fswebcam libxml2 libxml2-dev \
-                libssl-dev libxslt1-dev npm
+                libssl-dev libxslt1-dev
 
 		apt-get clean
 

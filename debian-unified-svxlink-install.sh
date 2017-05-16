@@ -461,6 +461,107 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
 touch /tmp/stage3
 fi
 
+#Install asound.conf for audio performance
+cat > /etc/asound.conf < DELIM
+pcm.dmixed {
+    type dmix
+    ipc_key 1024
+    ipc_key_add_uid 0
+    slave.pcm "hw:0,0"
+}
+pcm.dsnooped {
+    type dsnoop
+    ipc_key 1025
+    slave.pcm "hw:0,0"
+}
+
+
+pcm.duplex {
+    type asym
+    playback.pcm "dmixed"
+    capture.pcm "dsnooped"
+}
+
+
+pcm.left {
+    type asym
+    playback.pcm "shared_left"
+    capture.pcm "dsnooped"
+}
+
+
+pcm.right {
+    type asym
+    playback.pcm "shared_right"
+    capture.pcm "dsnooped"
+}
+
+
+# Instruct ALSA to use pcm.duplex as the default device
+pcm.!default {
+    type plug
+    slave.pcm "duplex"
+}
+ctl.!default {
+    type hw
+    card 0
+}
+
+
+# split left channel off
+pcm.shared_left
+   {
+   type plug
+   slave.pcm "hw:0"
+   slave.channels 2
+   ttable.0.0 1
+   }
+
+
+# split right channel off
+pcm.shared_right
+   {
+   type plug
+   slave.pcm "hw:0"
+   slave.channels 2
+   ttable.1.1 1
+   }
+
+#dtparam=i2s=on
+
+ Pcm_slave.hw_loopback {
+   Pcm "hw: loopback, 1.2"
+   Channels 2
+   Format RAW
+   Rate 16000
+ }
+
+ Pcm.plug_loopback {
+   Type plug
+   Slave hw_loopback
+     Ttable {
+     0.0 = 1
+     0.1 = 1
+   }
+ }
+
+Ctl. Equal  {
+type equal ;
+Controls "/home/pi/.alsaequal.bin"
+}
+
+Pcm. Plugequal  {
+type equal ;
+Slavic. pcm  "plughw: 0.0" ;
+Controls "/home/pi/.alsaequal.bin"
+}
+
+Pcm. Equal  {
+type plug ;
+Slavic. pcm plugequal ;
+}
+DELIM
+
 if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
         # raspBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
                 if [ $device_short_name == "rpi" ] ; then
@@ -604,7 +705,6 @@ if [[ -f /tmp/stage5 ]] && [[ ! -f /tmp/stage6 ]] ; then
         cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
-tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
 
         echo "--------------------------------------------------------------"

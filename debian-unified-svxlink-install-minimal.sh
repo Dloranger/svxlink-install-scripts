@@ -169,14 +169,14 @@ title="What would you like to set your hostname to? Valid characters are a-z, 0-
 
 echo "$heading"
 echo "$title"
-read -r orp_hostname
+read -r svx_hostname
 
-if [[ $orp_hostname == "" ]] ; then
-        orp_hostname="$dfhost"
+if [[ $svx_hostname == "" ]] ; then
+        svx_hostname="$dfhost"
 fi
 
 echo ""
-echo "Using $orp_hostname as hostname."
+echo "Using $svx_hostname as hostname."
 echo ""
 
 # Detects ARM devices, and sets a flag for later use
@@ -264,7 +264,7 @@ DELIM
         echo " Setting Host/Domain name                                     "
         echo "--------------------------------------------------------------"
         cat > /etc/hostname << DELIM
-$orp_hostname
+$svx_hostname
 DELIM
 
 # Setup /etc/hosts
@@ -276,7 +276,7 @@ ff00::0         ip6-mcastprefix
 ff02::1         ip6-allnodes
 ff02::2         ip6-allrouters
 
-127.0.0.1       $orp_hostname
+127.0.0.1       $svx_hostname
 
 DELIM
 touch /tmp/stage1
@@ -467,15 +467,7 @@ if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
                                 usermod -a -G daemon,gpio,audio svxlink
                 fi
 
-                echo "--------------------------------------------------------------"
-                echo " Setting up sudoers permissions for openrepeater              "
-                echo "--------------------------------------------------------------"
-                cat >> /etc/sudoers << DELIM
-#allow www-data to access amixer and service
-www-data   ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper. NOPASSWD: /usr/bin/aplay, NOPASSWD: /usr/bin/arecord
-DELIM
-
-        # raspBERRY PI ,ODROID, BBB :
+         # raspBERRY PI ,ODROID, BBB :
         # Set up usb sound for alsa mixer
         if [[ $snd_short_name == "usb" ]] ; then
                 if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "bbb" ]] ; then

@@ -51,19 +51,22 @@ echo ""
 heading="What Arm Board?"
 title="Please choose the device you are building on:"
 prompt="Pick a Arm Board:"
-options=( "nanopi-neo" "chip" "beaglebone" "odroid_c1+" "odroid_c2" "raspberry_pi_2_3")
+options=( "nextthing_chip" "nanopi_k2" "nanopi_neo" "nanopi_neo2" "neo2+" "odroid_c1+" "odroid_c2" "orangepi" "raspberry_pi_2_3")
 echo "$heading"
 echo "$title"
 PS3="$prompt"
 select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
-    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="neo"; break;;
-    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
-    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="bbb"; break;;
-    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc1+"; break;;
-    5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
-    6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi"; break;;
+    1 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="chip"; break;;
+    2 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="k2"; break;;
+    3 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="neo"; break;;
+    4 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="neo2"; break;;
+    5 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="neo2+"; break;;
+    6 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc1+"; break;;
+    7 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="oc2"; break;;
+    8 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="op"; break;;
+    9 ) echo ""; echo "Building for $opt1"; device_long_name="$opt1"; device_short_name="rpi2_3"; break;;
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
 
     *) echo "Invalid option. Try another one.";continue;;
@@ -106,9 +109,9 @@ echo ""
 # Request user input to ask for type of svxlink install
 #
 echo ""
-heading="What type of svxlink istall: Stable=15.11.5 Teesting is 16.04.x  Devel=Head ?"
+heading="What type of svxlink istall: Stable=1.5.11 Testing is 1.5.99.x  Devel=Head"
 title="Please choose svxlink install type:"
-prompt="Pick a Svxlink install type Stable=15.11.5 Teesting is 16.04.x  Devel=Head : "
+prompt="Pick a Svxlink install type Stable=1.5.11 Teesting is 1.5.99.x  Devel=Head : "
 options=("stable" "testing" "devel")
 echo "$heading"
 echo "$title"
@@ -139,17 +142,17 @@ echo ""
 heading="What type of SoundCard ?"
 title="Please choose Soundcard type:"
 prompt="Pick your sound card:"
-options=("usbsnd" "onboard" )
+options=("onboard" "usbsnd" )
 echo "$heading"
 echo "$title"
 PS3="$prompt"
 select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
     # Soundcard usb
-    1 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="usb"; break;;
+    1 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="onboard"; break;;
 
     # Soundcard onboard
-    2 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="onboard"; break;;
+    2 ) echo ""; echo "Building for $opt1"; snd_long_name="$opt1"; snd_short_name="usb"; break;;
     $(( ${#options[@]}+1 )) ) echo "Goodbye!"; exit;;
 
     *) echo "Invalid option. Try another one.";continue;;
@@ -305,35 +308,13 @@ DELIM
 		#update repo 
 		apt-get update > /dev/null
 		
-        #install debian keys
-        if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "bbb" ]] || [[ $device_short_name == "chip" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Updating debian repository keys..                            "
-                echo "--------------------------------------------------------------"
-                if [[ ! -f key ]] ;then
-                apt-get install -y --force-yes --fix-missing debian-archive-keyring debian-keyring debian-ports-archive-keyring
-                apt-key update -y --fix-missing
-                touch key
-                fi
-        fi
-
         #Arbbian repo
-        if [[ $os_short_name == "armb" ]] ; then
+        if [[ $os_short_name == "armb" | "diet" ]] ; then
                 echo "--------------------------------------------------------------"
                 echo " Adding armbian repository                                    "
                 echo "--------------------------------------------------------------"
                 cat > /etc/apt/sources.list.d/armbian.list << DELIM
-deb http://apt.armbian.com jessie main utils jessie-desktop
-DELIM
-        fi
-
-        #dietpi repo
-        if [[ $os_short_name == "diet" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Adding dietpi repository                                     "
-                echo "--------------------------------------------------------------"
-                cat > /etc/apt/sources.list.d/dietpi.list << DELIM
-deb http://mirror.ox.ac.uk/sites/archive.raspbian.org/archive/raspbian jessie main contrib non-free rpi
+deb http://apt.armbian.com jessie main utils
 DELIM
         fi
 
@@ -365,15 +346,6 @@ DELIM
 				wget https://archive.raspbian.org/raspbian.public.key
 				gpg --import raspbian.public.key | apt-key add -
 				fi
-        fi
-
-        if [[ $os_short_name == "bbb-deb" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Adding BBBlack repository                                    "
-                echo "--------------------------------------------------------------"
-                cat > /etc/apt/sources.list.d/beaglebone.list << DELIM
-deb [arch=armhf] http://repos.rcn-ee.net/debian/ jessie main
-DELIM
         fi
 
         if [[ $device_short_name == "chip" ]] ; then
@@ -433,7 +405,7 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
                 network-manager git-core python-pip libsigc++-2.0-0c2a libhamlib2 libhamlib2++c2 libhamlib2-perl libhamlib-utils \
                 libhamlib-doc libhamlib2-tcl python-libhamlib2 fail2ban resolvconf libasound2-plugin-equal watchdog i2c-tools \
                 python-configobj python-cheetah python-imaging python-usb python-dev python-pip fswebcam libxml2 libxml2-dev \
-                libssl-dev libxslt1-dev
+                libssl-dev libxslt1-dev ssmtp
 
 		apt-get clean
 
@@ -448,7 +420,7 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
         echo " Installingsvxlink into the gpio group                        "
         echo "--------------------------------------------------------------"
         #adding user svxlink to gpio user group
-        usermod -a -G gpio svxlink
+        usermod -a -G daemon,gpio,audio svxlink
 
         echo "--------------------------------------------------------------"
         echo " Installing svxlink sounds                                    "
@@ -563,15 +535,7 @@ Slavic. pcm plugequal ;
 DELIM
 
 if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
-        # raspBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
-                if [ $device_short_name == "rpi" ] ; then
-                        echo "--------------------------------------------------------------"
-                        echo " Add svxlink user to groups: gpio, audio, and daemon          "
-                        echo "--------------------------------------------------------------"
-                                usermod -a -G daemon,gpio,audio svxlink
-                fi
-
-        # raspBERRY PI ,ODROID, BBB :
+        # raspBERRY PI ,ODROID :
         # Set up usb sound for alsa mixer
         if [[ $snd_short_name == "usb" ]] ; then
                 if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "bbb" ]] ; then
@@ -586,6 +550,18 @@ options snd-usb-audio nrpacks=1 index=1
 DELIM
                 fi
         fi
+
+        if [[ $os_short_name == "diet" ]] ; then
+			if [[ $device_short_name == "neo" | "neo2" | "neo2+" ]] ; then
+			    echo "--------------------------------------------------------------"
+                echo " Enabling 1wire nanopi boards"
+                echo "--------------------------------------------------------------"
+				sed -i /rtc/modules -e"s#\#w1-sunxi#w1-sunxi#"
+				sed -i /rtc/modules -e"s#\#w1-gpip#w1-gpio#"
+				sed -i /rtc/modules -e"s#\#w1-therm#w1-therm#"
+				sed -i /rtc/modules -e"s#\#w1-cir#w1-cir#"
+			fi
+		fi
 
         if [[ $device_short_name == "rpi" ]] ; then
                 echo "--------------------------------------------------------------"
@@ -636,7 +612,7 @@ DELIM
                         sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
                 fi
         fi
-
+        
         if [[ $device_short_name == "rpi" ]] ; then
                 echo "--------------------------------------------------------------"
                 echo " Configuring /boot/config.txt options part 3                  "
@@ -677,24 +653,6 @@ DELIM
                 apt-get install -y --force-yes wiringpi
         fi
 
-        # BEAGLEBONE ONLY Disable HDMI sound
-        if [[ $device_short_name == "bbb" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Disable HDMI sound                                           "
-                echo "--------------------------------------------------------------"
-                cat >> /boot/uEnv.txt << DELIM
-optargs=capemgr.disable_partno=BB-BONELT-HDMI
-DELIM
-        fi
-        
-        if [[ $device_short_name == "bbb" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo "Adding new kernel to the Beagle Bone Black                    "
-                echo "--------------------------------------------------------------"
-                #update the kernal on the beaglebone black
-                apt-get install linux-image-4.4.0-rc5-bone0 linux-firmware-image-4.4.0-rc5-bone0
-        fi
-
 touch /tmp/stage5
 fi
 
@@ -710,13 +668,26 @@ DELIM
         echo "--------------------------------------------------------------"
         echo " Enable SvxLink systemd services                              "
         echo "--------------------------------------------------------------"
-        systemctl enable nginx && systemctl enable php5-fpm && systemctl enable svxlink && systemctl enable remotetrx
+        systemctl enable svxlink svxserver remotetrx
 
 touch /tmp/stage6
 fi
 
+if [[ -f /tmp/stage6 ]] && [[ ! -f /tmp/stage7 ]] ; then
+
+git clone 
+
+#enable menu 
+cat >> /root/.profile << DELIM
+if [ -f /usr/bin/Svxlink-Config ]; then 
+	/usr/bin/Svxlink-Config
+fi
+DELIM
+
+
 echo " ########################################################################################## "
-echo " #             The SVXLink Repeater / Echolink server Install is now complete             # "
+echo " #                      The SvxLink Repeater / SvxSevr / RemoterTrx   					# "
+echo " #                        Echolink server Install is now complete                         # "
 echo " #                          and your system is ready for use..                            # "
 echo " ########################################################################################## "
 
@@ -731,8 +702,12 @@ if [[ -f /tmp/stage6 ]] && [[ ! -f clean ]] ; then
 fi
 
 echo " ###########################################################################################"
-echo " # reboot required due to kernel update                                                     "
+echo " # reboot required after install to make sure allinstalled ok and services setup.                 "
 echo " ###########################################################################################"
 reboot
 
 ) | tee install.log
+
+sed -i /boot/config.txt -e"s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+
+

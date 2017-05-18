@@ -309,7 +309,7 @@ DELIM
 		apt-get update > /dev/null
 		
         #Arbbian repo
-        if [[ $os_short_name == "armb" | "diet" ]] ; then
+        if [[ $os_short_name == "armb" | "diet"]] ; then
                 echo "--------------------------------------------------------------"
                 echo " Adding armbian repository                                    "
                 echo "--------------------------------------------------------------"
@@ -673,20 +673,8 @@ DELIM
 touch /tmp/stage6
 fi
 
-if [[ -f /tmp/stage6 ]] && [[ ! -f /tmp/stage7 ]] ; then
-
-git clone 
-
-#enable menu 
-cat >> /root/.profile << DELIM
-if [ -f /usr/bin/Svxlink-Config ]; then 
-	/usr/bin/Svxlink-Config
-fi
-DELIM
-
-
 echo " ########################################################################################## "
-echo " #                      The SvxLink Repeater / SvxSevr / RemoterTrx   					# "
+echo " #                      The SvxLink Repeater / SvxSever / RemoterTrx   					# "
 echo " #                        Echolink server Install is now complete                         # "
 echo " #                          and your system is ready for use..                            # "
 echo " ########################################################################################## "

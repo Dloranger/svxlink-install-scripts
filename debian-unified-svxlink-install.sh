@@ -179,7 +179,7 @@ if [[ $svx_hostname == "" ]] ; then
 fi
 
 echo ""
-echo "Using $svxhostname as hostname."
+echo "Using $svx_hostname as hostname."
 echo ""
 
 # Detects ARM devices, and sets a flag for later use
@@ -267,7 +267,7 @@ DELIM
         echo " Setting Host/Domain name                                     "
         echo "--------------------------------------------------------------"
         cat > /etc/hostname << DELIM
-$svxhostname
+$svx_hostname
 DELIM
 
 # Setup /etc/hosts
@@ -309,7 +309,7 @@ DELIM
 		apt-get update > /dev/null
 		
         #Arbbian repo
-        if [[ $os_short_name == "armb" | "diet"]] ; then
+        if [[ $os_short_name == "armb" ]] || [[ $os_short_name == "diet" ]] ; then
                 echo "--------------------------------------------------------------"
                 echo " Adding armbian repository                                    "
                 echo "--------------------------------------------------------------"
@@ -334,7 +334,7 @@ DELIM
                 echo "--------------------------------------------------------------"
                 echo " Updating raspberry Pi repository keys...                     "
                 echo "--------------------------------------------------------------"
-                if {{ ! -f  raspbian.public.key ]] ; then
+                if [[ ! -f  raspbian.public.key ]] ; then
 				gpg --keyserver pgp.mit.edu --recv 8B48AD6246925553
 				gpg --export --armor 8B48AD6246925553 | apt-key add -
 				gpg --keyserver pgp.mit.edu --recv  7638D0442B90D010
@@ -434,7 +434,7 @@ touch /tmp/stage3
 fi
 
 #Install asound.conf for audio performance
-cat > /etc/asound.conf < DELIM
+cat > /etc/asound.conf << DELIM
 pcm.dmixed {
     type dmix
     ipc_key 1024
@@ -552,7 +552,7 @@ DELIM
         fi
 
         if [[ $os_short_name == "diet" ]] ; then
-			if [[ $device_short_name == "neo" | "neo2" | "neo2+" ]] ; then
+			if [[ $device_short_name == "neo" ]] || [[ $device_short_name == "neo2" ]] || [[ $device_short_name == "neo2+" ]] ; then
 			    echo "--------------------------------------------------------------"
                 echo " Enabling 1wire nanopi boards"
                 echo "--------------------------------------------------------------"

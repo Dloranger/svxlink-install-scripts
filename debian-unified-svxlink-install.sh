@@ -104,7 +104,7 @@ select opt1 in "${options[@]}" "Quit"; do
     case "$REPLY" in
 
     # armbian
-    1 ) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="armb"; break;;
+    1) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="armb"; break;;
 
     # raspbian
     2) echo ""; echo "Building for $opt1"; os_long_name="$opt1"; os_short_name="rasp"; break;;

@@ -582,9 +582,7 @@ DELIM
 			if ( ! grep -q snd-usb-audio /etc/modules ); then
 				{ echo "snd-aloop"; echo "snd-usb-audio"; } >> "/etc/modules"
 			fi
-			cat > /etc/modprobe.d/alsa-base.conf << DELIM
-options snd-usb-audio nrpacks=1 index=1
-DELIM
+			
 		fi
 	fi
 

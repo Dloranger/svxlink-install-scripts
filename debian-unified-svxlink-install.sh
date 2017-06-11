@@ -413,7 +413,7 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
 		echo "--------------------------------------------------------------"
         echo " Installing SvxReflector Service                              "
         echo "--------------------------------------------------------------"		
-		apt-get install svxreflector
+		apt-get -y --force-yes install svxreflector
 		fi
 		
         apt-get clean

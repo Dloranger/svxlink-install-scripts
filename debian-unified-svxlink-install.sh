@@ -176,55 +176,52 @@ done
 echo ""
 
 if [[ ! -f  /tmp/stage1 ]] && [[ ! -f  /tmp/stage1 ]] ; then
-#
-# Request user input to set hostname
-#
-echo ""
-heading="System hostname"
-dfhost=$(hostname -s)
-title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($dfhost) for this device OR enter your own and hit ENTER:"
+	#
+	# Request user input to set hostname
+	#
+	echo ""
+	heading="System hostname"
+	dfhost=$(hostname -s)
+	title="What would you like to set your hostname to? Valid characters are a-z, 0-9, and hyphen. Hit ENTER to use the default hostname ($dfhost) for this device OR enter your own and hit ENTER:"
 
-echo "$heading"
-echo "$title"
-read -r orp_hostname
+	echo "$heading"
+	echo "$title"
+	read -r orp_hostname
 
-if [[ $orp_hostname == "" ]] ; then
-        orp_hostname="$dfhost"
-fi
+	if [[ $orp_hostname == "" ]] ; then
+ 	       orp_hostname="$dfhost"
+	fi
 
-echo ""
-echo "Using $orp_hostname as hostname."
-echo ""
+	echo ""
+	echo "Using $orp_hostname as hostname."
+	echo ""
 
-# debian Systems
-if [[ -f /etc/debian_version ]] ; then
-  os=debian
-else
-  os=unknown
-fi
+	# debian Systems
+	if [[ -f /etc/debian_version ]] ; then
+  		os=debian
+	else
+  		os=unknown
+	fi
 
-# Prepare debian systems for the installation process
-if [[ "$os" = "debian" ]] ; then
+	# Prepare debian systems for the installation process
+	if [[ "$os" = "debian" ]] ; then
 
-# Jan 17, 2016
-# Detect the version of debian, and do some custom work for different versions
-if (grep -q "8." /etc/debian_version) ; then
-  debian_version=8
-else
-  debian_version=unsupported
-fi
+	# Jan 17, 2016
+	# Detect the version of debian, and do some custom work for different versions
+	if (grep -q "8." /etc/debian_version) ; then
+  		debian_version=8
+	else
+  		debian_version=unsupported
+	fi
 
-# This is a debian setup/cleanup/install script for IRLP
-clear
-
-if [[ "$debian_version" != "8" ]] ; then
-  echo
-  echo "**** ERROR ****"
-  echo "This script will only work on debian Jessie images at this time."
-  echo "No other version of debian is supported at this time. "
-  echo "**** EXITING ****"
-  exit -1
-fi
+	if [[ "$debian_version" != "8" ]] ; then
+	  	echo
+		echo "**** ERROR ****"
+		echo "This script will only work on debian Jessie images at this time."
+		echo "No other version of debian is supported at this time. "
+		echo "**** EXITING ****"
+		exit -1
+	fi
 fi
 
 #
@@ -246,37 +243,37 @@ DELIM
 # Testing for internet connection. Pulled from and modified
 # http://www.linuxscrew.com/2009/04/02/tiny-bash-scripts-check-internet-connection-availability/
 #
-        echo "--------------------------------------------------------------"
-        echo "This Script Currently Requires a internet connection          "
-        echo "--------------------------------------------------------------"
-        wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
+    echo "--------------------------------------------------------------"
+    echo "This Script Currently Requires a internet connection          "
+    echo "--------------------------------------------------------------"
+    wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google &> /dev/null
 
-        if [[ ! -s /tmp/index.google ]] ;then
-                echo "No Internet connection. Please check ethernet cable / wifi connection"
-                /bin/rm /tmp/index.google
-                exit 1
-        else
-                echo "I Found the Internet ... continuing!!!!!"
-                /bin/rm /tmp/index.google
-        fi
+    if [[ ! -s /tmp/index.google ]] ;then
+            echo "No Internet connection. Please check ethernet cable / wifi connection"
+            /bin/rm /tmp/index.google
+            exit 1
+    else
+            echo "I Found the Internet ... continuing!!!!!"
+            /bin/rm /tmp/index.google
+    fi
 
-        echo "--------------------------------------------------------------"
-        printf ' Current ip is eth0: '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
-        printf ' Current ip is wlan0: '; ip -f inet addr show dev wlan0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
-        echo "--------------------------------------------------------------"
-        echo
+    echo "--------------------------------------------------------------"
+    printf ' Current ip is eth0: '; ip -f inet addr show dev eth0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
+    printf ' Current ip is wlan0: '; ip -f inet addr show dev wlan0 | sed -n 's/^ *inet *\([.0-9]*\).*/\1/p'
+    echo "--------------------------------------------------------------"
+    echo
 
-        echo "--------------------------------------------------------------"
-        echo " Set a reboot if Kernel Panic                                 "
-        echo "--------------------------------------------------------------"
-        cat >> /etc/sysctl.conf << DELIM
+    echo "--------------------------------------------------------------"
+    echo " Set a reboot if Kernel Panic                                 "
+    echo "--------------------------------------------------------------"
+    cat >> /etc/sysctl.conf << DELIM
 kernel.panic = 10
 DELIM
 
-        echo "--------------------------------------------------------------"
-        echo " Setting Host/Domain name                                     "
-        echo "--------------------------------------------------------------"
-        cat > /etc/hostname << DELIM
+    echo "--------------------------------------------------------------"
+    echo " Setting Host/Domain name                                     "
+    echo "--------------------------------------------------------------"
+    cat > /etc/hostname << DELIM
 $orp_hostname
 DELIM
 
@@ -360,7 +357,7 @@ DELIM
                 cat > /etc/apt/sources.list.d/svxlink.list << DELIM
 deb http://repo.openrepeater.com/svxlink/testing/debian/ jessie main
 DELIM
-fi
+		fi
 
         # SvxLink Release Repo
         if [[ $svx_short_name == "svx-devel" ]] ; then
@@ -479,8 +476,8 @@ www-data   ALL=(ALL) NOPASSWD: /usr/sbin/orp_helper, NOPASSWD: /usr/bin/aplay, N
 DELIM
 
 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]]; then
-#Install asound.conf for audio performance
-cat > /etc/asound.conf << DELIM
+	#Install asound.conf for audio performance
+	cat > /etc/asound.conf << DELIM
 pcm.dmixed {
     type dmix
     ipc_key 1024
@@ -573,67 +570,68 @@ Pcm. Equal  {
 }
 
 DELIM
-fi
-        # Rasberry PI 2/3 ,ODROID C1+/C2:
-        # Set up usb sound for alsa mixer
-        if [[ $snd_short_name == "usb" ]] ; then
-                if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "i386" ]] || [[ $device_short_name == "amd64" ]]; then
-                        echo "--------------------------------------------------------------"
-                        echo " Set up usb sound for alsa mixer                              "
-                        echo "--------------------------------------------------------------"
-                        if ! grep -q snd-usb-audio /etc/modules; then
-                        { echo "snd-aloop"; echo "snd-usb-audio" } >> "/etc/modules"
-                        fi
-                        cat > /etc/modprobe.d/alsa-base.conf << DELIM
+	fi
+
+	# Rasberry PI 2/3 ,ODROID C1+/C2:
+	# Set up usb sound for alsa mixer
+	if [[ $snd_short_name == "usb" ]] ; then
+		if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "i386" ]] || [[ $device_short_name == "amd64" ]]; then
+			echo "--------------------------------------------------------------"
+			echo " Set up usb sound for alsa mixer                              "
+			echo "--------------------------------------------------------------"
+			if ( ! grep -q snd-usb-audio /etc/modules ); then
+				{ echo "snd-aloop"; echo "snd-usb-audio"; } >> "/etc/modules"
+			fi
+			cat > /etc/modprobe.d/alsa-base.conf << DELIM
 options snd-usb-audio nrpacks=1 index=1
 DELIM
-                fi
-        fi
+		fi
+	fi
 
-        if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Enable the bcm2708 and bcm2835 /etc/modules                  "
-                echo "--------------------------------------------------------------"
-                { echo "i2c-bcm2708"; echo "spi-bcm2835"; } >> /etc/modules
-        fi
+	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
+		echo "--------------------------------------------------------------"
+		echo " Enable the bcm2708 and bcm2835 /etc/modules                  "
+		echo "--------------------------------------------------------------"
+		{ echo "i2c-bcm2708"; echo "spi-bcm2835"; } >> /etc/modules
+	fi
 
 
-        if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "neo" ]] || [[ $device_short_name == "neo2" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Enable the spi & i2c /etc/modules                            "
-                echo "--------------------------------------------------------------"
-                { echo "i2c-dev"; echo "w1-gpio"; echo "w1-therm"; } >> /etc/modules
-        fi
+	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "neo" ]] || [[ $device_short_name == "neo2" ]] ; then
+		echo "--------------------------------------------------------------"
+		echo " Enable the spi & i2c /etc/modules                            "
+		echo "--------------------------------------------------------------"
+		{ echo "i2c-dev"; echo "w1-gpio"; echo "w1-therm"; } >> /etc/modules
+	fi
 
-        if [[ $os_short_name == "rasp" ]] ; then
-                if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "rpi3" ]] ; then
-                        echo "--------------------------------------------------------------"
-                        echo " Configuring /boot/config.txt options 1"
-                        echo "--------------------------------------------------------------"
-                        sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
-                        sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
-                        sed -i /boot/config.txt -e "s#\#dtparam=spi=on#dtparam=spi=on#"
-                fi
-        fi
+	if [[ $os_short_name == "rasp" ]] ; then
+		if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "rpi3" ]] ; then
+			echo "--------------------------------------------------------------"
+			echo " Configuring /boot/config.txt options 1"
+			echo "--------------------------------------------------------------"
+			sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+			sed -i /boot/config.txt -e "s#\#dtparam=i2c_arm=on#dtparam=i2c_arm=on#"
+			sed -i /boot/config.txt -e "s#\#dtparam=spi=on#dtparam=spi=on#"
+		fi
+	fi
 
-        if [[ $os_short_name == "armb" ]] ; then
-                if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
-                        echo "--------------------------------------------------------------"
-                        echo " Configuring /boot/config.txt options part 2"
-                        echo "--------------------------------------------------------------"
-                        sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
-                        sed -i /boot/config.txt -e "s#dtparam=i2c_arm=off#dtparam=i2c_arm=on#"
-                        sed -i /boot/config.txt -e "s#dtparam=i2c1=off#dtparam=i2c_arm=on#"
-                        sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
-                fi
-        fi
+	if [[ $os_short_name == "armb" ]] ; then
+		if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
+			echo "--------------------------------------------------------------"
+			echo " Configuring /boot/config.txt options part 2"
+			echo "--------------------------------------------------------------"
+			sed -i /boot/config.txt -e "s#dtparam=audio=on#dtparam=audio=off#"
+			sed -i /boot/config.txt -e "s#dtparam=i2c_arm=off#dtparam=i2c_arm=on#"
+			sed -i /boot/config.txt -e "s#dtparam=i2c1=off#dtparam=i2c_arm=on#"
+			sed -i /boot/config.txt -e "s#dtparam=spi=off#dtparam=spi=on#"
+		fi
+	fi
 
-        if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "rpi3" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Configuring /boot/config.txt options part 3                  "
-                echo "--------------------------------------------------------------"
-                # set usb power level
-                cat >> /boot/config.txt << DELIM
+	if [[ $device_short_name == "rpi" ]] || [[ $device_short_name == "rpi3" ]] ; then
+		echo "--------------------------------------------------------------"
+		echo " Configuring /boot/config.txt options part 3                  "
+		echo "--------------------------------------------------------------"
+		# set usb power level
+		cat >> /boot/config.txt << DELIM
 
 #usb max current
 usb_max_current=1
@@ -651,22 +649,22 @@ dtoverlay=w1-gpio,gpiopin=4
 #Enable mcp3008 adc overlay
 #dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
 DELIM
-        fi
+	fi
 
-        if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
-                echo "--------------------------------------------------------------"
-                echo " Disable onboard HDMI sound card not used in openrepeater     "
-                echo "--------------------------------------------------------------"
-                #/boot/config.txt
-                sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
-        fi
-
-        if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [ $device_short_name == "oc1+" ] ; then
-                echo "--------------------------------------------------------------"
-                echo " Installing wiringpi                                          "
-                echo "--------------------------------------------------------------"
-                apt-get install -y --force-yes wiringpi
-        fi
+	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] ; then
+		echo "--------------------------------------------------------------"
+		echo " Disable onboard HDMI sound card not used in openrepeater     "
+		echo "--------------------------------------------------------------"
+		#/boot/config.txt
+		sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
+	fi
+	
+	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [ $device_short_name == "oc1+" ] ; then
+		echo "--------------------------------------------------------------"
+		echo " Installing wiringpi                                          "
+		echo "--------------------------------------------------------------"
+		apt-get install -y --force-yes wiringpi
+	fi
 
 touch /tmp/stage4
 fi

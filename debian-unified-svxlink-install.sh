@@ -670,10 +670,10 @@ touch /tmp/stage4
 fi
 
 if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
-        echo "--------------------------------------------------------------"
-        echo " Set apt-get run in a tempfs                                  "
-        echo "--------------------------------------------------------------"
-        cat >> /etc/fstab << DELIM
+	echo "--------------------------------------------------------------"
+	echo " Set apt-get run in a tempfs                                  "
+	echo "--------------------------------------------------------------"
+	cat >> /etc/fstab << DELIM
 tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0

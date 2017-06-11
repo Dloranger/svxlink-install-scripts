@@ -461,7 +461,7 @@ if [[ -f /tmp/stage2 ]] && [[ ! -f /tmp/stage3 ]] ; then
 touch /tmp/stage3
 fi
 
-if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
+if [[ -f /tmp/stage3 ]] && [[ ! -f /tmp/stage4 ]] ; then
         # raspBERRY PI ONLY: Add svxlink user to groups: gpio, audio, and daemon
                 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]]; then
                         echo "--------------------------------------------------------------"
@@ -574,8 +574,7 @@ Pcm. Equal  {
 
 DELIM
 fi
-
-        # Raspberr PI 2/3,ODROID c1+/c2, :
+        # Rasberry PI 2/3 ,ODROID C1+/C2:
         # Set up usb sound for alsa mixer
         if [[ $snd_short_name == "usb" ]] ; then
                 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "i386" ]] || [[ $device_short_name == "amd64" ]]; then
@@ -643,14 +642,14 @@ usb_max_current=1
 dtoverlay=w1-gpio,gpiopin=4
 
 #Enable FE-Pi Overlay
-dtoverlay=fe-pi-audio
-dtoverlay=i2s-mmap
+#dtoverlay=fe-pi-audio
+#dtoverlay=i2s-mmap
 
 #Enable mcp23s17 Overlay
-dtoverlay=mcp23017,addr=0x20,gpiopin=12
+#dtoverlay=mcp23017,addr=0x20,gpiopin=12
 
 #Enable mcp3008 adc overlay
-dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
+#dtoverlay=mcp3008:spi0-0-present,spi0-0-speed=3600000
 DELIM
         fi
 
@@ -669,11 +668,10 @@ DELIM
                 apt-get install -y --force-yes wiringpi
         fi
 
-touch /tmp/stage5
+touch /tmp/stage4
 fi
 
-if [[ -f /tmp/stage5 ]] && [[ ! -f /tmp/stage6 ]] ; then
-	 if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]] || [[ $device_short_name == "oc2" ]] || [[ $device_short_name == "neo" ]] || [[ $device_short_name == "neo2" ]] ; then
+if [[ -f /tmp/stage4 ]] && [[ ! -f /tmp/stage5 ]] ; then
         echo "--------------------------------------------------------------"
         echo " Set apt-get run in a tempfs                                  "
         echo "--------------------------------------------------------------"
@@ -682,8 +680,14 @@ tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
-	fi
-touch /tmp/stage6
+
+        echo "--------------------------------------------------------------"
+        echo " Enable SvxLink systemd services                              "
+        echo "--------------------------------------------------------------"
+        systemctl enable nginx
+        systemctl enable php5-fpm 
+
+touch /tmp/stage5
 fi
 
 echo " ########################################################################################## "
@@ -691,7 +695,7 @@ echo " #             The SVXLink Repeater / Echolink server Install is now compl
 echo " #                          and your system is ready for use..                            # "
 echo " ########################################################################################## "
 
-if [[ -f /tmp/stage6 ]] && [[ ! -f clean ]] ; then
+if [[ -f /tmp/stage5 ]] && [[ ! -f clean ]] ; then
 	echo "--------------------------------------------------------------"
 	echo " Cleaning up after install                                    "
 	echo "--------------------------------------------------------------"

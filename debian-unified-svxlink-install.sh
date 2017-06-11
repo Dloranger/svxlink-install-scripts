@@ -659,7 +659,7 @@ DELIM
 		sed -i /boot/config.txt -e"s#dtparam=audio=on#\#dtparam=audio=on#"
 	fi
 	
-	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [ $device_short_name == "oc1+" ] ; then
+	if [[ $device_short_name == "rpi2" ]] || [[ $device_short_name == "rpi3" ]] || [[ $device_short_name == "oc1+" ]]; then
 		echo "--------------------------------------------------------------"
 		echo " Installing wiringpi                                          "
 		echo "--------------------------------------------------------------"
@@ -678,12 +678,6 @@ tmpfs /tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/tmp  tmpfs nodev,nosuid,mode=1777  0 0
 tmpfs /var/cache/apt/archives tmpfs   size=100M,defaults,noexec,nosuid,nodev,mode=0755 0 0
 DELIM
-
-        echo "--------------------------------------------------------------"
-        echo " Enable SvxLink systemd services                              "
-        echo "--------------------------------------------------------------"
-        systemctl enable nginx
-        systemctl enable php5-fpm 
 
 touch /tmp/stage5
 fi
